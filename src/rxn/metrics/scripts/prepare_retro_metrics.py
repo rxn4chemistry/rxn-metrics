@@ -15,10 +15,10 @@ from rxn.utilities.files import (
 )
 from rxn.utilities.logging import setup_console_and_file_logger
 
-from rxn.metrics.rxn_models.classification_translation import classification_translation
-from rxn.metrics.rxn_models.metrics_files import RetroFiles
-from rxn.metrics.rxn_models.run_metrics import evaluate_metrics
-from rxn.metrics.rxn_models.utils import convert_class_token_idx_for_tranlation_models
+from rxn.metrics.classification_translation import classification_translation
+from rxn.metrics.metrics_files import RetroFiles
+from rxn.metrics.run_metrics import evaluate_metrics
+from rxn.metrics.utils import convert_class_token_idx_for_tranlation_models
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

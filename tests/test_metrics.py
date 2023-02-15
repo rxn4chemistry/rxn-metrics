@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from rxn.metrics.rxn_models.metrics import (
+from rxn.metrics.metrics import (
     class_diversity,
     coverage,
     get_sequence_multiplier,

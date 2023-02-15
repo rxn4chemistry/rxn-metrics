@@ -1,6 +1,6 @@
 import pytest
 
-from rxn.metrics.rxn_models.context_metrics import (
+from rxn.metrics.context_metrics import (
     fraction_of_identical_compounds,
     identical_fraction,
 )

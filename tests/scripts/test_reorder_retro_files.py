@@ -3,7 +3,7 @@ from pathlib import Path
 
 from rxn.utilities.files import dump_list_to_file, load_list_from_file
 
-from rxn.metrics.rxn_models.metrics_files import RetroFiles
+from rxn.metrics.metrics_files import RetroFiles
 from rxn.metrics.scripts.reorder_retro_predictions_class_token import (
     reorder_retro_predictions_class_token,
 )

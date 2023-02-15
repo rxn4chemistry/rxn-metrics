@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from rxn.metrics.rxn_models.run_metrics import evaluate_metrics, run_model_for_metrics
+from rxn.metrics.run_metrics import evaluate_metrics, run_model_for_metrics
 
 
 @click.command(context_settings={"show_default": True})
