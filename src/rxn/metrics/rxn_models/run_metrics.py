@@ -8,12 +8,12 @@ from typing import Dict, Type
 
 from rxn.chemutils.miscellaneous import canonicalize_file
 from rxn.chemutils.tokenization import copy_as_detokenized
+from rxn.onmt_training.translation import rxn_translation
 from rxn.utilities.files import PathLike, ensure_directory_exists_and_is_empty
 from rxn.utilities.logging import setup_console_and_file_logger
 
 from .context_metrics import ContextMetrics
 from .forward_metrics import ForwardMetrics
-from .forward_or_retro_translation import rxn_translation
 from .metrics_calculator import MetricsCalculator
 from .metrics_files import ContextFiles, ForwardFiles, MetricsFiles, RetroFiles
 from .retro_metrics import RetroMetrics

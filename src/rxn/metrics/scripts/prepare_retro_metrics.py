@@ -5,6 +5,7 @@ from typing import Optional, Union
 import click
 from rxn.chemutils.miscellaneous import canonicalize_file
 from rxn.chemutils.tokenization import copy_as_detokenized, detokenize_smiles
+from rxn.onmt_training.translation import rxn_translation
 from rxn.utilities.files import (
     dump_list_to_file,
     ensure_directory_exists_and_is_empty,
@@ -14,15 +15,10 @@ from rxn.utilities.files import (
 )
 from rxn.utilities.logging import setup_console_and_file_logger
 
-from rxn.onmt_training.rxn_models.classification_translation import (
-    classification_translation,
-)
-from rxn.onmt_training.rxn_models.forward_or_retro_translation import rxn_translation
-from rxn.onmt_training.rxn_models.metrics_files import RetroFiles
-from rxn.onmt_training.rxn_models.run_metrics import evaluate_metrics
-from rxn.onmt_training.rxn_models.utils import (
-    convert_class_token_idx_for_tranlation_models,
-)
+from rxn.metrics.rxn_models.classification_translation import classification_translation
+from rxn.metrics.rxn_models.metrics_files import RetroFiles
+from rxn.metrics.rxn_models.run_metrics import evaluate_metrics
+from rxn.metrics.rxn_models.utils import convert_class_token_idx_for_tranlation_models
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
