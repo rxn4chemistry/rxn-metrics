@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 from rxn.chemutils.tokenization import file_is_tokenized, tokenize_file
-from rxn.onmt_utils.translate import translate
+from rxn.onmt_utils import translate
 from rxn.utilities.files import is_path_exists_or_creatable
 
 from .tokenize_file import (

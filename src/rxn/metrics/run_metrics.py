@@ -8,7 +8,7 @@ from typing import Dict, Type
 
 from rxn.chemutils.miscellaneous import canonicalize_file
 from rxn.chemutils.tokenization import copy_as_detokenized
-from rxn.onmt_training.translation import rxn_translation
+from rxn.onmt_models import rxn_translation
 from rxn.utilities.files import PathLike, ensure_directory_exists_and_is_empty
 from rxn.utilities.logging import setup_console_and_file_logger
 

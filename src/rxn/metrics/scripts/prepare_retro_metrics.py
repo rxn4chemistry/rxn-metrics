@@ -5,7 +5,7 @@ from typing import Optional, Union
 import click
 from rxn.chemutils.miscellaneous import canonicalize_file
 from rxn.chemutils.tokenization import copy_as_detokenized, detokenize_smiles
-from rxn.onmt_training.translation import rxn_translation
+from rxn.onmt_models import rxn_translation
 from rxn.utilities.files import (
     dump_list_to_file,
     ensure_directory_exists_and_is_empty,
