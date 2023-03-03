@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RXN package for the calculation of metrics for OpenNMT-based models &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="RXN metrics" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">README</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-requirements">System Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-guide">Installation guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculation-of-metrics">Calculation of metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>RXN package for the calculation of metrics for OpenNMT-based models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rxn-package-for-the-calculation-of-metrics-for-opennmt-based-models">
+<h1>RXN package for the calculation of metrics for OpenNMT-based models<a class="headerlink" href="#rxn-package-for-the-calculation-of-metrics-for-opennmt-based-models" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/rxn4chemistry/rxn-metrics/actions"><img alt="Actions tests" src="https://github.com/rxn4chemistry/rxn-metrics/actions/workflows/tests.yaml/badge.svg" /></a></p>
+<p>This repository contains a Python package and associated scripts for training reaction models based on the OpenNMT library.
+This repository is closely related to <a class="reference external" href="https://github.com/rxn4chemistry/rxn-onmt-models"><code class="docutils literal notranslate"><span class="pre">rxn-onmt-models</span></code></a>, which handles the training pipelines for these models.
+The repository also relies on other RXN packages; see <a class="reference external" href="https://github.com/rxn4chemistry/rxn-utilities"><code class="docutils literal notranslate"><span class="pre">rxn-utilities</span></code></a>, <a class="reference external" href="https://github.com/rxn4chemistry/rxn-chemutils"><code class="docutils literal notranslate"><span class="pre">rxn-chemutils</span></code></a>, and <a class="reference external" href="https://github.com/rxn4chemistry/rxn-onmt-utils"><code class="docutils literal notranslate"><span class="pre">rxn-onmt-utils</span></code></a>.</p>
+<p>The documentation can be found <a class="reference external" href="https://rxn4chemistry.github.io/rxn-metrics/">here</a>.</p>
+<p>This repository was produced through a collaborative project involving IBM Research Europe and Syngenta.</p>
+<section id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this heading"></a></h2>
+<p>This package is supported on all operating systems.
+It has been tested on the following systems:</p>
+<ul class="simple">
+<li><p>macOS: Big Sur (11.1)</p></li>
+<li><p>Linux: Ubuntu 18.04.4</p></li>
+</ul>
+<p>A Python version of 3.6, 3.7, or 3.8 is recommended.
+Python versions 3.9 and above are not expected to work due to compatibility with the selected version of OpenNMT.</p>
+</section>
+<section id="installation-guide">
+<h2>Installation guide<a class="headerlink" href="#installation-guide" title="Permalink to this heading"></a></h2>
+<p>The package can be installed from Pypi:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>rxn-metrics<span class="o">[</span>rdkit<span class="o">]</span>
+</pre></div>
+</div>
+<p>You can leave out <code class="docutils literal notranslate"><span class="pre">[rdkit]</span></code> if RDKit is already available in your environment.</p>
+<p>For local development, the package can be installed with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,rdkit]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="calculation-of-metrics">
+<h2>Calculation of metrics<a class="headerlink" href="#calculation-of-metrics" title="Permalink to this heading"></a></h2>
+<p>The metrics are best calculated by launching one of the following scripts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rxn-prepare-context-metrics</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rxn-prepare-forward-metrics</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rxn-prepare-retro-metrics</span></code>
+Note that these scripts will run the models directly to limit the likelihood of making errors.</p></li>
+</ul>
+<p>If the prediction files are available already, the script <code class="docutils literal notranslate"><span class="pre">rxn-evaluate-metrics</span></code> will compute the metrics only.</p>
+<p>To aggregate all the metrics for different models (typically: after tuning the hyperparameters), you can run the script <code class="docutils literal notranslate"><span class="pre">rxn-parse-metrics-into-csv</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="RXN metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

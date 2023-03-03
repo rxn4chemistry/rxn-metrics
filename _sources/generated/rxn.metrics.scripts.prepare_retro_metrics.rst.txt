@@ -1,0 +1,30 @@
+rxn.metrics.scripts.prepare\_retro\_metrics
+===========================================
+
+.. automodule:: rxn.metrics.scripts.prepare_retro_metrics
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_rxn_from_files
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

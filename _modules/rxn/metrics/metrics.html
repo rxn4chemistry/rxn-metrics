@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rxn.metrics.metrics &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>rxn.metrics.metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rxn.metrics.metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Definition of the different metrics.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.containers</span> <span class="kn">import</span> <span class="n">chunker</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.misc</span> <span class="kn">import</span> <span class="n">get_multiplier</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="top_n_accuracy"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.top_n_accuracy.html#rxn.metrics.metrics.top_n_accuracy">[docs]</a><span class="k">def</span> <span class="nf">top_n_accuracy</span><span class="p">(</span>
+    <span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the top-n accuracy values.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the list sizes are incompatible, forwarded from get_sequence_multiplier().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary of top-n accuracy values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiplier</span> <span class="o">=</span> <span class="n">get_sequence_multiplier</span><span class="p">(</span>
+        <span class="n">ground_truth</span><span class="o">=</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span>
+    <span class="p">)</span>
+
+    <span class="c1"># we will count, for each &quot;n&quot;, how many predictions are correct</span>
+    <span class="n">correct_for_topn</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)]</span>
+
+    <span class="c1"># We will process sample by sample - for that, we need to chunk the predictions</span>
+    <span class="n">prediction_chunks</span> <span class="o">=</span> <span class="n">chunker</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">multiplier</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">gt</span><span class="p">,</span> <span class="n">predictions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction_chunks</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">):</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="n">gt</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">[:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">correct_for_topn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">correct</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">correct_for_topn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="round_trip_accuracy"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.round_trip_accuracy.html#rxn.metrics.metrics.round_trip_accuracy">[docs]</a><span class="k">def</span> <span class="nf">round_trip_accuracy</span><span class="p">(</span>
+    <span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the round-trip accuracy values, split by n-th predictions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the list sizes are incompatible, forwarded from get_sequence_multiplier().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of Dictionaries of round-trip accuracy &quot;n&quot; values and standard deviation (std_dev) &quot;n&quot; values.</span>
+<span class="sd">        Here the standard deviation is the measure of how much the average round-trip accuracy can change from</span>
+<span class="sd">        one sample to the other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiplier</span> <span class="o">=</span> <span class="n">get_sequence_multiplier</span><span class="p">(</span>
+        <span class="n">ground_truth</span><span class="o">=</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span>
+    <span class="p">)</span>
+
+    <span class="c1"># we will get, for each prediction of each &quot;n&quot;, how many predictions among the &quot;n&quot; are correct</span>
+    <span class="n">correct_for_n</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)]</span>
+
+    <span class="c1"># We will process sample by sample - for that, we need to chunk the predictions</span>
+    <span class="n">prediction_chunks</span> <span class="o">=</span> <span class="n">chunker</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">multiplier</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">gt</span><span class="p">,</span> <span class="n">predictions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction_chunks</span><span class="p">):</span>
+        <span class="n">correct_values</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="n">gt</span> <span class="o">==</span> <span class="n">prediction</span>
+            <span class="n">correct_values</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">correct</span><span class="p">)</span>
+            <span class="n">correct_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">correct_values</span><span class="p">)</span>
+
+    <span class="c1"># Note: for the &quot;n&quot;-th value, we must divide by &quot;n=i+1&quot; because the list elements were not averaged.</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">correct_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span>
+    <span class="n">std_dev</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">correct_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">std_dev</span></div>
+
+
+<div class="viewcode-block" id="coverage"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.coverage.html#rxn.metrics.metrics.coverage">[docs]</a><span class="k">def</span> <span class="nf">coverage</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the coverage values, split by n-th predictions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the list sizes are incompatible, forwarded from get_sequence_multiplier().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary of coverage &quot;n&quot; values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiplier</span> <span class="o">=</span> <span class="n">get_sequence_multiplier</span><span class="p">(</span>
+        <span class="n">ground_truth</span><span class="o">=</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span>
+    <span class="p">)</span>
+
+    <span class="c1"># we will count, for each &quot;n&quot;, if there is at list one correct prediction</span>
+    <span class="n">one_correct_for_n</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)]</span>
+
+    <span class="c1"># We will process sample by sample - for that, we need to chunk the predictions</span>
+    <span class="n">prediction_chunks</span> <span class="o">=</span> <span class="n">chunker</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">multiplier</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">gt</span><span class="p">,</span> <span class="n">predictions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction_chunks</span><span class="p">):</span>
+        <span class="n">found_correct</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">gt</span> <span class="o">==</span> <span class="n">prediction</span><span class="p">:</span>
+                <span class="n">found_correct</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">one_correct_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">found_correct</span>
+
+    <span class="c1"># Note: the total number of predictions to take into account for the &quot;n&quot;-th (= &quot;i+1&quot;th)</span>
+    <span class="c1"># value is ALWAYS &quot;len(ground_truth)&quot;.</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">one_correct_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="class_diversity"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.class_diversity.html#rxn.metrics.metrics.class_diversity">[docs]</a><span class="k">def</span> <span class="nf">class_diversity</span><span class="p">(</span>
+    <span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+    <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+    <span class="n">predicted_classes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the class diversity values, split by n-th predictions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the list sizes are incompatible, forwarded from get_sequence_multiplier().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of Dictionaries of class diversity &quot;n&quot; values and standard deviation (std) &quot;n&quot; values.</span>
+<span class="sd">        Here the standard deviation is the measure of how much the average class diversity can change from</span>
+<span class="sd">        one sample to the other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiplier</span> <span class="o">=</span> <span class="n">get_sequence_multiplier</span><span class="p">(</span>
+        <span class="n">ground_truth</span><span class="o">=</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span>
+    <span class="p">)</span>
+
+    <span class="c1"># we will count how many unique superclasses are present</span>
+    <span class="n">predicted_superclasses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">long_class</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">long_class</span> <span class="ow">in</span> <span class="n">predicted_classes</span>
+    <span class="p">]</span>
+
+    <span class="c1"># we will get, for each prediction of each &quot;n&quot;, how many predictions among the &quot;n&quot; are correct</span>
+    <span class="n">classes_for_n</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)]</span>
+
+    <span class="c1"># We will process sample by sample - for that, we need to chunk the predictions and the classes</span>
+    <span class="n">predictions_and_classes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">predicted_superclasses</span><span class="p">)</span>
+    <span class="n">prediction_and_classes_chunks</span> <span class="o">=</span> <span class="n">chunker</span><span class="p">(</span>
+        <span class="n">predictions_and_classes</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">multiplier</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">gt</span><span class="p">,</span> <span class="n">preds_and_classes</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction_and_classes_chunks</span><span class="p">):</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">pred_class</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">preds_and_classes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">gt</span> <span class="o">==</span> <span class="n">pred</span> <span class="ow">and</span> <span class="n">pred_class</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">classes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pred_class</span><span class="p">)</span>
+            <span class="n">classes_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">))</span>
+
+    <span class="c1"># Note: the total number of predictions to take into account for the &quot;n&quot;-th (= &quot;i+1&quot;th)</span>
+    <span class="c1"># value is &quot;len(ground_truth)&quot;. A value &lt; 1 is the consequence of having incorrect predictions</span>
+    <span class="n">classdiversity</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classes_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span>
+    <span class="n">std_dev</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">classes_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">classdiversity</span><span class="p">,</span> <span class="n">std_dev</span></div>
+
+
+<div class="viewcode-block" id="get_sequence_multiplier"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.get_sequence_multiplier.html#rxn.metrics.metrics.get_sequence_multiplier">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_multiplier</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the multiplier for the number of predictions by ground truth sample.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the lists have inadequate sizes (possibly forwarded</span>
+<span class="sd">            from get_multiplier).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_gt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
+    <span class="n">n_pred</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">get_multiplier</span><span class="p">(</span><span class="n">n_gt</span><span class="p">,</span> <span class="n">n_pred</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

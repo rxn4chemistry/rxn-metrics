@@ -1,0 +1,6 @@
+rxn.metrics.tokenize\_file.tokenize\_class
+==========================================
+
+.. currentmodule:: rxn.metrics.tokenize_file
+
+.. autofunction:: tokenize_class

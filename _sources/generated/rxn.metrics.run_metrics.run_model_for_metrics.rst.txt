@@ -1,0 +1,6 @@
+rxn.metrics.run\_metrics.run\_model\_for\_metrics
+=================================================
+
+.. currentmodule:: rxn.metrics.run_metrics
+
+.. autofunction:: run_model_for_metrics

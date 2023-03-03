@@ -1,0 +1,30 @@
+rxn.metrics.scripts.parse\_metrics\_into\_csv
+=============================================
+
+.. automodule:: rxn.metrics.scripts.parse_metrics_into_csv
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_metric_from_dir
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+rxn.metrics.metrics.get\_sequence\_multiplier
+=============================================
+
+.. currentmodule:: rxn.metrics.metrics
+
+.. autofunction:: get_sequence_multiplier

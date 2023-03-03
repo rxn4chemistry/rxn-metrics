@@ -1,0 +1,6 @@
+rxn.metrics.context\_metrics.identical\_fraction
+================================================
+
+.. currentmodule:: rxn.metrics.context_metrics
+
+.. autofunction:: identical_fraction

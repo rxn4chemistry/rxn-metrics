@@ -1,0 +1,6 @@
+rxn.metrics.scripts.reorder\_retro\_predictions\_class\_token.reorder\_retro\_predictions\_class\_token
+=======================================================================================================
+
+.. currentmodule:: rxn.metrics.scripts.reorder_retro_predictions_class_token
+
+.. autofunction:: reorder_retro_predictions_class_token

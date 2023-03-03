@@ -1,0 +1,6 @@
+rxn.metrics.run\_metrics.evaluate\_metrics
+==========================================
+
+.. currentmodule:: rxn.metrics.run_metrics
+
+.. autofunction:: evaluate_metrics

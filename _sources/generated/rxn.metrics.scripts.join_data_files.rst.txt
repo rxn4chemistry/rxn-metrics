@@ -1,0 +1,31 @@
+rxn.metrics.scripts.join\_data\_files
+=====================================
+
+.. automodule:: rxn.metrics.scripts.join_data_files
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      join_data_files
+      sorted_chunk_directories
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+rxn.metrics.metrics.class\_diversity
+====================================
+
+.. currentmodule:: rxn.metrics.metrics
+
+.. autofunction:: class_diversity

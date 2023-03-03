@@ -1,0 +1,25 @@
+rxn.metrics.metrics\_files.ForwardFiles
+=======================================
+
+.. currentmodule:: rxn.metrics.metrics_files
+
+.. autoclass:: ForwardFiles
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ForwardFiles.__init__
+   
+   
+
+   
+   
+   

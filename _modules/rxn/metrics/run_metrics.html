@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rxn.metrics.run_metrics &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>rxn.metrics.run_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rxn.metrics.run_metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to launch metrics calculations on forward, retro, or context models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">from</span> <span class="nn">rxn.chemutils.miscellaneous</span> <span class="kn">import</span> <span class="n">canonicalize_file</span>
+<span class="kn">from</span> <span class="nn">rxn.chemutils.tokenization</span> <span class="kn">import</span> <span class="n">copy_as_detokenized</span>
+<span class="kn">from</span> <span class="nn">rxn.onmt_models</span> <span class="kn">import</span> <span class="n">rxn_translation</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">ensure_directory_exists_and_is_empty</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.logging</span> <span class="kn">import</span> <span class="n">setup_console_and_file_logger</span>
+
+<span class="kn">from</span> <span class="nn">.context_metrics</span> <span class="kn">import</span> <span class="n">ContextMetrics</span>
+<span class="kn">from</span> <span class="nn">.forward_metrics</span> <span class="kn">import</span> <span class="n">ForwardMetrics</span>
+<span class="kn">from</span> <span class="nn">.metrics_calculator</span> <span class="kn">import</span> <span class="n">MetricsCalculator</span>
+<span class="kn">from</span> <span class="nn">.metrics_files</span> <span class="kn">import</span> <span class="n">ContextFiles</span><span class="p">,</span> <span class="n">ForwardFiles</span><span class="p">,</span> <span class="n">MetricsFiles</span><span class="p">,</span> <span class="n">RetroFiles</span>
+<span class="kn">from</span> <span class="nn">.retro_metrics</span> <span class="kn">import</span> <span class="n">RetroMetrics</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+<span class="n">_FILES_MAPPING</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">MetricsFiles</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;forward&quot;</span><span class="p">:</span> <span class="n">ForwardFiles</span><span class="p">,</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">ContextFiles</span><span class="p">,</span>
+    <span class="s2">&quot;retro&quot;</span><span class="p">:</span> <span class="n">RetroFiles</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_CALCULATOR_MAPPING</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">MetricsCalculator</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;forward&quot;</span><span class="p">:</span> <span class="n">ForwardMetrics</span><span class="p">,</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">ContextMetrics</span><span class="p">,</span>
+    <span class="s2">&quot;retro&quot;</span><span class="p">:</span> <span class="n">RetroMetrics</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_metrics_files"><a class="viewcode-back" href="../../../generated/rxn.metrics.run_metrics.get_metrics_files.html#rxn.metrics.run_metrics.get_metrics_files">[docs]</a><span class="k">def</span> <span class="nf">get_metrics_files</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">files_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricsFiles</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_FILES_MAPPING</span><span class="p">[</span><span class="n">task</span><span class="p">](</span><span class="n">files_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_metrics_calculator"><a class="viewcode-back" href="../../../generated/rxn.metrics.run_metrics.get_metrics_calculator.html#rxn.metrics.run_metrics.get_metrics_calculator">[docs]</a><span class="k">def</span> <span class="nf">get_metrics_calculator</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">MetricsFiles</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricsCalculator</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_CALCULATOR_MAPPING</span><span class="p">[</span><span class="n">task</span><span class="p">]</span><span class="o">.</span><span class="n">from_metrics_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="evaluate_metrics"><a class="viewcode-back" href="../../../generated/rxn.metrics.run_metrics.evaluate_metrics.html#rxn.metrics.run_metrics.evaluate_metrics">[docs]</a><span class="k">def</span> <span class="nf">evaluate_metrics</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">files_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating the </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2"> metrics...&quot;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">get_metrics_files</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">files_path</span><span class="p">)</span>
+    <span class="n">calculator</span> <span class="o">=</span> <span class="n">get_metrics_calculator</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+    <span class="n">metrics_dict</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">files</span><span class="o">.</span><span class="n">metrics_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Overwriting &quot;</span><span class="si">{</span><span class="n">files</span><span class="o">.</span><span class="n">metrics_file</span><span class="si">}</span><span class="s1">&quot;!&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">metrics_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metrics_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Evaluating the </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s1"> metrics... Saved to &quot;</span><span class="si">{</span><span class="n">files</span><span class="o">.</span><span class="n">metrics_file</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_model_for_metrics"><a class="viewcode-back" href="../../../generated/rxn.metrics.run_metrics.run_model_for_metrics.html#rxn.metrics.run_metrics.run_model_for_metrics">[docs]</a><span class="k">def</span> <span class="nf">run_model_for_metrics</span><span class="p">(</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">src_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">tgt_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">n_best</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">beam_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">initialize_logger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">ensure_directory_exists_and_is_empty</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">get_metrics_files</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">initialize_logger</span><span class="p">:</span>
+        <span class="n">setup_console_and_file_logger</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>
+
+    <span class="n">copy_as_detokenized</span><span class="p">(</span><span class="n">src_file</span><span class="p">,</span> <span class="n">files</span><span class="o">.</span><span class="n">gt_src</span><span class="p">)</span>
+    <span class="n">copy_as_detokenized</span><span class="p">(</span><span class="n">tgt_file</span><span class="p">,</span> <span class="n">files</span><span class="o">.</span><span class="n">gt_tgt</span><span class="p">)</span>
+
+    <span class="c1"># context prediction</span>
+    <span class="n">rxn_translation</span><span class="p">(</span>
+        <span class="n">src_file</span><span class="o">=</span><span class="n">files</span><span class="o">.</span><span class="n">gt_src</span><span class="p">,</span>
+        <span class="n">tgt_file</span><span class="o">=</span><span class="n">files</span><span class="o">.</span><span class="n">gt_tgt</span><span class="p">,</span>
+        <span class="n">pred_file</span><span class="o">=</span><span class="n">files</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
+        <span class="n">n_best</span><span class="o">=</span><span class="n">n_best</span><span class="p">,</span>
+        <span class="n">beam_size</span><span class="o">=</span><span class="n">beam_size</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">canonicalize_file</span><span class="p">(</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">predicted_canonical</span><span class="p">,</span>
+        <span class="n">fallback_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sort_molecules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

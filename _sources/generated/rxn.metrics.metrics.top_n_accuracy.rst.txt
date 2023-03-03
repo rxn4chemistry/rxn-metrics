@@ -1,0 +1,6 @@
+rxn.metrics.metrics.top\_n\_accuracy
+====================================
+
+.. currentmodule:: rxn.metrics.metrics
+
+.. autofunction:: top_n_accuracy

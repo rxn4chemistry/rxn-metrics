@@ -1,0 +1,30 @@
+rxn.metrics.scripts.ensure\_data\_dimension
+===========================================
+
+.. automodule:: rxn.metrics.scripts.ensure_data_dimension
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      ensure_data_dimension
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

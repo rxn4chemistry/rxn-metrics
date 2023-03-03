@@ -1,0 +1,30 @@
+rxn.metrics.utils
+=================
+
+.. automodule:: rxn.metrics.utils
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      convert_class_token_idx_for_tranlation_models
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

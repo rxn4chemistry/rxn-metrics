@@ -1,0 +1,6 @@
+rxn.metrics.run\_metrics.get\_metrics\_calculator
+=================================================
+
+.. currentmodule:: rxn.metrics.run_metrics
+
+.. autofunction:: get_metrics_calculator

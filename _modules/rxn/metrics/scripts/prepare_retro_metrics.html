@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rxn.metrics.scripts.prepare_retro_metrics &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>rxn.metrics.scripts.prepare_retro_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rxn.metrics.scripts.prepare_retro_metrics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">rxn.chemutils.miscellaneous</span> <span class="kn">import</span> <span class="n">canonicalize_file</span>
+<span class="kn">from</span> <span class="nn">rxn.chemutils.tokenization</span> <span class="kn">import</span> <span class="n">copy_as_detokenized</span><span class="p">,</span> <span class="n">detokenize_smiles</span>
+<span class="kn">from</span> <span class="nn">rxn.onmt_models</span> <span class="kn">import</span> <span class="n">rxn_translation</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">dump_list_to_file</span><span class="p">,</span>
+    <span class="n">ensure_directory_exists_and_is_empty</span><span class="p">,</span>
+    <span class="n">iterate_lines_from_file</span><span class="p">,</span>
+    <span class="n">load_list_from_file</span><span class="p">,</span>
+    <span class="n">raise_if_paths_are_identical</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.logging</span> <span class="kn">import</span> <span class="n">setup_console_and_file_logger</span>
+
+<span class="kn">from</span> <span class="nn">rxn.metrics.classification_translation</span> <span class="kn">import</span> <span class="n">classification_translation</span>
+<span class="kn">from</span> <span class="nn">rxn.metrics.metrics_files</span> <span class="kn">import</span> <span class="n">RetroFiles</span>
+<span class="kn">from</span> <span class="nn">rxn.metrics.run_metrics</span> <span class="kn">import</span> <span class="n">evaluate_metrics</span>
+<span class="kn">from</span> <span class="nn">rxn.metrics.utils</span> <span class="kn">import</span> <span class="n">convert_class_token_idx_for_tranlation_models</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="create_rxn_from_files"><a class="viewcode-back" href="../../../../generated/rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files.html#rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files">[docs]</a><span class="k">def</span> <span class="nf">create_rxn_from_files</span><span class="p">(</span>
+    <span class="n">input_file_precursors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">input_file_products</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">raise_if_paths_are_identical</span><span class="p">(</span><span class="n">input_file_precursors</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    <span class="n">raise_if_paths_are_identical</span><span class="p">(</span><span class="n">input_file_products</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Combining files &quot;</span><span class="si">{</span><span class="n">input_file_precursors</span><span class="si">}</span><span class="s1">&quot; and &quot;</span><span class="si">{</span><span class="n">input_file_products</span><span class="si">}</span><span class="s1">&quot; -&gt; &quot;</span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">precursors</span> <span class="o">=</span> <span class="n">load_list_from_file</span><span class="p">(</span><span class="n">input_file_precursors</span><span class="p">)</span>
+    <span class="n">products</span> <span class="o">=</span> <span class="n">load_list_from_file</span><span class="p">(</span><span class="n">input_file_products</span><span class="p">)</span>
+
+    <span class="n">rxn</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prec</span><span class="si">}</span><span class="s2">&gt;&gt;</span><span class="si">{</span><span class="n">prod</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">prec</span><span class="p">,</span> <span class="n">prod</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">precursors</span><span class="p">,</span> <span class="n">products</span><span class="p">)]</span>
+    <span class="n">dump_list_to_file</span><span class="p">(</span><span class="n">rxn</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span></div>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;show_default&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--precursors_file&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File containing the precursors of a test set&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--products_file&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File containing the products of a test set&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--output_dir&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Where to save all the files&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--retro_model&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the single-step retrosynthesis model&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--forward_model&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the forward model&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--classification_model&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the classification model&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--batch_size&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Batch size&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--n_best&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of retro predictions to make (top-N)&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--gpu&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If given, run the predictions on a GPU.&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--no_metrics&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If given, the metrics will not be computed.&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--beam_size&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Beam size for retro (&gt; n_best).&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--class_tokens&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of tokens used in the trainings&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">precursors_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">products_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">retro_model</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">forward_model</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">classification_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">n_best</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">no_metrics</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">beam_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">class_tokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Starting from the ground truth files and two models (retro, forward),</span>
+<span class="sd">    generate the translation files needed for the metrics, and calculate the default metrics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ensure_directory_exists_and_is_empty</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">retro_files</span> <span class="o">=</span> <span class="n">RetroFiles</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="n">setup_console_and_file_logger</span><span class="p">(</span><span class="n">retro_files</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">class_tokens</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">class_token_products</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">convert_class_token_idx_for_tranlation_models</span><span class="p">(</span><span class="n">class_token_idx</span><span class="p">)</span><span class="si">}{</span><span class="n">detokenize_smiles</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">iterate_lines_from_file</span><span class="p">(</span><span class="n">products_file</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">class_token_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_tokens</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">class_token_precursors</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">detokenize_smiles</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">iterate_lines_from_file</span><span class="p">(</span><span class="n">precursors_file</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_tokens</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">dump_list_to_file</span><span class="p">(</span><span class="n">class_token_products</span><span class="p">,</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">class_token_products</span><span class="p">)</span>
+        <span class="n">dump_list_to_file</span><span class="p">(</span><span class="n">class_token_precursors</span><span class="p">,</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">class_token_precursors</span><span class="p">)</span>
+
+    <span class="n">copy_as_detokenized</span><span class="p">(</span><span class="n">products_file</span><span class="p">,</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">gt_src</span><span class="p">)</span>
+    <span class="n">copy_as_detokenized</span><span class="p">(</span><span class="n">precursors_file</span><span class="p">,</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">gt_tgt</span><span class="p">)</span>
+
+    <span class="c1"># retro</span>
+    <span class="n">rxn_translation</span><span class="p">(</span>
+        <span class="n">src_file</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">retro_files</span><span class="o">.</span><span class="n">gt_src</span>
+            <span class="k">if</span> <span class="n">class_tokens</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">class_token_products</span>
+        <span class="p">),</span>
+        <span class="n">tgt_file</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">retro_files</span><span class="o">.</span><span class="n">gt_tgt</span>
+            <span class="k">if</span> <span class="n">class_tokens</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">retro_files</span><span class="o">.</span><span class="n">class_token_precursors</span>
+        <span class="p">),</span>
+        <span class="n">pred_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">retro_model</span><span class="p">,</span>
+        <span class="n">n_best</span><span class="o">=</span><span class="n">n_best</span><span class="p">,</span>
+        <span class="n">beam_size</span><span class="o">=</span><span class="n">beam_size</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">canonicalize_file</span><span class="p">(</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_canonical</span><span class="p">,</span>
+        <span class="n">fallback_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sort_molecules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Forward</span>
+    <span class="n">rxn_translation</span><span class="p">(</span>
+        <span class="n">src_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_canonical</span><span class="p">,</span>
+        <span class="n">tgt_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pred_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_products</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">forward_model</span><span class="p">,</span>
+        <span class="n">n_best</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">beam_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">canonicalize_file</span><span class="p">(</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_products</span><span class="p">,</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_products_canonical</span><span class="p">,</span>
+        <span class="n">fallback_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">classification_model</span><span class="p">:</span>
+        <span class="n">create_rxn_from_files</span><span class="p">(</span>
+            <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_canonical</span><span class="p">,</span>
+            <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_products_canonical</span><span class="p">,</span>
+            <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_rxn_canonical</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Classification</span>
+        <span class="n">classification_translation</span><span class="p">(</span>
+            <span class="n">src_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_rxn_canonical</span><span class="p">,</span>
+            <span class="n">tgt_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">pred_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_classes</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">classification_model</span><span class="p">,</span>
+            <span class="n">n_best</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">no_metrics</span><span class="p">:</span>
+        <span class="n">evaluate_metrics</span><span class="p">(</span><span class="s2">&quot;retro&quot;</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

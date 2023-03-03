@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rxn.metrics.scripts.ensure_data_dimension &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>rxn.metrics.scripts.ensure_data_dimension</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rxn.metrics.scripts.ensure_data_dimension</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">count_lines</span><span class="p">,</span>
+    <span class="n">dump_list_to_file</span><span class="p">,</span>
+    <span class="n">load_list_from_file</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.logging</span> <span class="kn">import</span> <span class="n">setup_console_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="ensure_data_dimension"><a class="viewcode-back" href="../../../../generated/rxn.metrics.scripts.ensure_data_dimension.ensure_data_dimension.html#rxn.metrics.scripts.ensure_data_dimension.ensure_data_dimension">[docs]</a><span class="k">def</span> <span class="nf">ensure_data_dimension</span><span class="p">(</span>
+    <span class="n">txt_files</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PathLike</span><span class="p">],</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">max_dimension</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Check the lengths of the files and ensure they are all the same</span>
+    <span class="n">file_length</span> <span class="o">=</span> <span class="p">[</span><span class="n">count_lines</span><span class="p">(</span><span class="n">txt_file</span><span class="p">)</span> <span class="k">for</span> <span class="n">txt_file</span> <span class="ow">in</span> <span class="n">txt_files</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">file_length</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The files provided have not the same number of lines.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that there are no files with the same name</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">txt_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">txt_file</span> <span class="ow">in</span> <span class="n">txt_files</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">filenames</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Found files with the same same. Aborting&quot;</span><span class="p">)</span>
+
+    <span class="n">split_no</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">file_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">max_dimension</span><span class="p">)</span>
+
+    <span class="n">new_output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">new_output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Splitting in </span><span class="si">{</span><span class="n">split_no</span><span class="si">}</span><span class="s2"> files with the same name of the original ones . &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Saving in </span><span class="si">{</span><span class="n">new_output_dir</span><span class="si">}</span><span class="s2"> .&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">txt_file</span> <span class="ow">in</span> <span class="n">txt_files</span><span class="p">:</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">load_list_from_file</span><span class="p">(</span><span class="n">txt_file</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">txt_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">for</span> <span class="n">chunk_no</span><span class="p">,</span> <span class="n">chunk_start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">file_length</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_dimension</span><span class="p">)):</span>
+            <span class="c1"># create a sub_directory</span>
+            <span class="n">sub_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">new_output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">chunk_no</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">sub_directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created directory </span><span class="si">{</span><span class="n">sub_directory</span><span class="si">}</span><span class="s2"> . Saving files .&quot;</span><span class="p">)</span>
+
+            <span class="c1"># save all subfiles</span>
+            <span class="n">dump_list_to_file</span><span class="p">(</span>
+                <span class="n">file_content</span><span class="p">[</span><span class="n">chunk_start</span> <span class="p">:</span> <span class="n">chunk_start</span> <span class="o">+</span> <span class="n">max_dimension</span><span class="p">],</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">sub_directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;show_default&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;txt_files&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--output_dir&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Where to save all the files&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--max_dimension&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum file length allowed without splitting&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">txt_files</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_dimension</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Script to split too big files in subchunks . Useful for class token translations.</span>
+<span class="sd">    Takes as input an arbitrary number of files. Files are saved under output_dir/chunk_i</span>
+<span class="sd">    for i ranging from 0 to the number of splits needed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">setup_console_logger</span><span class="p">()</span>
+
+    <span class="n">ensure_data_dimension</span><span class="p">(</span><span class="n">txt_files</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">max_dimension</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

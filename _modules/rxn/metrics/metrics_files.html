@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rxn.metrics.metrics_files &mdash; RXN metrics 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> RXN metrics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RXN metrics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>rxn.metrics.metrics_files</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rxn.metrics.metrics_files</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="n">PathLike</span>
+
+
+<div class="viewcode-block" id="MetricsFiles"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.MetricsFiles.html#rxn.metrics.metrics_files.MetricsFiles">[docs]</a><span class="k">class</span> <span class="nc">MetricsFiles</span><span class="p">:</span>
+<div class="viewcode-block" id="MetricsFiles.__init__"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.MetricsFiles.html#rxn.metrics.metrics_files.MetricsFiles.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">gt_src</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gt_src.txt&quot;</span><span class="p">,</span>
+        <span class="n">gt_tgt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gt_tgt.txt&quot;</span><span class="p">,</span>
+        <span class="n">predicted</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred.txt&quot;</span><span class="p">,</span>
+        <span class="n">predicted_canonical</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predicted_canonical.txt&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;log.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;metrics.json&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gt_src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">gt_src</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gt_tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">gt_tgt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">predicted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_canonical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">predicted_canonical</span></div></div>
+
+
+<div class="viewcode-block" id="RetroFiles"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.RetroFiles.html#rxn.metrics.metrics_files.RetroFiles">[docs]</a><span class="k">class</span> <span class="nc">RetroFiles</span><span class="p">(</span><span class="n">MetricsFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding the locations of the files to write to or to read from for</span>
+<span class="sd">    the evaluation of retro metrics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_REORDERED_FILE_EXTENSION</span> <span class="o">=</span> <span class="s2">&quot;.reordered&quot;</span>
+
+<div class="viewcode-block" id="RetroFiles.__init__"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.RetroFiles.html#rxn.metrics.metrics_files.RetroFiles.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span>
+            <span class="n">gt_src</span><span class="o">=</span><span class="s2">&quot;gt_products.txt&quot;</span><span class="p">,</span>
+            <span class="n">gt_tgt</span><span class="o">=</span><span class="s2">&quot;gt_precursors.txt&quot;</span><span class="p">,</span>
+            <span class="n">predicted</span><span class="o">=</span><span class="s2">&quot;predicted_precursors.txt&quot;</span><span class="p">,</span>
+            <span class="n">predicted_canonical</span><span class="o">=</span><span class="s2">&quot;predicted_precursors_canonical.txt&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_token_products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;class_token_products.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_token_precursors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;class_token_precursors.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_precursors_log_probs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_precursors.txt.tokenized_log_probs&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_products.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_products_canonical</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_products_canonical.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_products_log_probs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_products.txt.tokenized_log_probs&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_rxn_canonical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_rxn_canonical.txt&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predicted_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;predicted_classes.txt&quot;</span></div>
+
+<div class="viewcode-block" id="RetroFiles.reordered"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.RetroFiles.html#rxn.metrics.metrics_files.RetroFiles.reordered">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">reordered</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the reordered path extension.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="n">RetroFiles</span><span class="o">.</span><span class="n">_REORDERED_FILE_EXTENSION</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ForwardFiles"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.ForwardFiles.html#rxn.metrics.metrics_files.ForwardFiles">[docs]</a><span class="k">class</span> <span class="nc">ForwardFiles</span><span class="p">(</span><span class="n">MetricsFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding the locations of the files to write to or to read from for</span>
+<span class="sd">    the evaluation of forward metrics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ForwardFiles.__init__"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.ForwardFiles.html#rxn.metrics.metrics_files.ForwardFiles.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span>
+            <span class="n">gt_src</span><span class="o">=</span><span class="s2">&quot;gt_precursors.txt&quot;</span><span class="p">,</span>
+            <span class="n">gt_tgt</span><span class="o">=</span><span class="s2">&quot;gt_products.txt&quot;</span><span class="p">,</span>
+            <span class="n">predicted</span><span class="o">=</span><span class="s2">&quot;predicted_products.txt&quot;</span><span class="p">,</span>
+            <span class="n">predicted_canonical</span><span class="o">=</span><span class="s2">&quot;predicted_products_canonical.txt&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ContextFiles"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.ContextFiles.html#rxn.metrics.metrics_files.ContextFiles">[docs]</a><span class="k">class</span> <span class="nc">ContextFiles</span><span class="p">(</span><span class="n">MetricsFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding the locations of the files to write to or to read from for</span>
+<span class="sd">    the evaluation of context metrics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContextFiles.__init__"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics_files.ContextFiles.html#rxn.metrics.metrics_files.ContextFiles.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span>
+            <span class="n">predicted</span><span class="o">=</span><span class="s2">&quot;predicted_context.txt&quot;</span><span class="p">,</span>
+            <span class="n">predicted_canonical</span><span class="o">=</span><span class="s2">&quot;predicted_context_canonical.txt&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright IBM RXN team 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

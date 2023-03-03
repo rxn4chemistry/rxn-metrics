@@ -1,0 +1,26 @@
+rxn.metrics.metrics\_files.RetroFiles
+=====================================
+
+.. currentmodule:: rxn.metrics.metrics_files
+
+.. autoclass:: RetroFiles
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RetroFiles.__init__
+      ~RetroFiles.reordered
+   
+   
+
+   
+   
+   

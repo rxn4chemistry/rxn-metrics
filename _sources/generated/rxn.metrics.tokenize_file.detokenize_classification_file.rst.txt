@@ -1,0 +1,6 @@
+rxn.metrics.tokenize\_file.detokenize\_classification\_file
+===========================================================
+
+.. currentmodule:: rxn.metrics.tokenize_file
+
+.. autofunction:: detokenize_classification_file

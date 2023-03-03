@@ -1,0 +1,6 @@
+rxn.metrics.scripts.prepare\_retro\_metrics.create\_rxn\_from\_files
+====================================================================
+
+.. currentmodule:: rxn.metrics.scripts.prepare_retro_metrics
+
+.. autofunction:: create_rxn_from_files

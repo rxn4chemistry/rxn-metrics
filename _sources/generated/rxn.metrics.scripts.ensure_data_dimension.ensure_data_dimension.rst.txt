@@ -1,0 +1,6 @@
+rxn.metrics.scripts.ensure\_data\_dimension.ensure\_data\_dimension
+===================================================================
+
+.. currentmodule:: rxn.metrics.scripts.ensure_data_dimension
+
+.. autofunction:: ensure_data_dimension

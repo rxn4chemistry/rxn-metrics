@@ -1,0 +1,6 @@
+rxn.metrics.context\_metrics.fraction\_of\_identical\_compounds
+===============================================================
+
+.. currentmodule:: rxn.metrics.context_metrics
+
+.. autofunction:: fraction_of_identical_compounds

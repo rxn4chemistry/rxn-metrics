@@ -1,0 +1,28 @@
+rxn.metrics.context\_metrics.ContextMetrics
+===========================================
+
+.. currentmodule:: rxn.metrics.context_metrics
+
+.. autoclass:: ContextMetrics
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ContextMetrics.__init__
+      ~ContextMetrics.from_metrics_files
+      ~ContextMetrics.from_raw_files
+      ~ContextMetrics.get_metrics
+   
+   
+
+   
+   
+   

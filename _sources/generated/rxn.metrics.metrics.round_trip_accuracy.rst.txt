@@ -1,0 +1,6 @@
+rxn.metrics.metrics.round\_trip\_accuracy
+=========================================
+
+.. currentmodule:: rxn.metrics.metrics
+
+.. autofunction:: round_trip_accuracy

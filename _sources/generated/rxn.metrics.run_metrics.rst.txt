@@ -1,0 +1,33 @@
+rxn.metrics.run\_metrics
+========================
+
+.. automodule:: rxn.metrics.run_metrics
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      evaluate_metrics
+      get_metrics_calculator
+      get_metrics_files
+      run_model_for_metrics
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

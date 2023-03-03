@@ -1,0 +1,39 @@
+rxn.metrics.context\_metrics
+============================
+
+.. automodule:: rxn.metrics.context_metrics
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      fraction_of_identical_compounds
+      identical_fraction
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      ContextMetrics
+   
+   
+
+   
+   
+   
+
+
+

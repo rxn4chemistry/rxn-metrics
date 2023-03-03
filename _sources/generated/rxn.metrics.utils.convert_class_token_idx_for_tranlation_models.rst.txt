@@ -1,0 +1,6 @@
+rxn.metrics.utils.convert\_class\_token\_idx\_for\_tranlation\_models
+=====================================================================
+
+.. currentmodule:: rxn.metrics.utils
+
+.. autofunction:: convert_class_token_idx_for_tranlation_models

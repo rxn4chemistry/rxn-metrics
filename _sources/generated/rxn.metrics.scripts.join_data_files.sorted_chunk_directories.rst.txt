@@ -1,0 +1,6 @@
+rxn.metrics.scripts.join\_data\_files.sorted\_chunk\_directories
+================================================================
+
+.. currentmodule:: rxn.metrics.scripts.join_data_files
+
+.. autofunction:: sorted_chunk_directories

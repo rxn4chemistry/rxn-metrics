@@ -1,0 +1,6 @@
+rxn.metrics.tokenize\_file.classification\_file\_is\_tokenized
+==============================================================
+
+.. currentmodule:: rxn.metrics.tokenize_file
+
+.. autofunction:: classification_file_is_tokenized

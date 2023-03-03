@@ -1,0 +1,6 @@
+rxn.metrics.scripts.parse\_metrics\_into\_csv.get\_metric\_from\_dir
+====================================================================
+
+.. currentmodule:: rxn.metrics.scripts.parse_metrics_into_csv
+
+.. autofunction:: get_metric_from_dir

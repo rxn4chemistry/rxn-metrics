@@ -1,0 +1,6 @@
+rxn.metrics.run\_metrics.get\_metrics\_files
+============================================
+
+.. currentmodule:: rxn.metrics.run_metrics
+
+.. autofunction:: get_metrics_files

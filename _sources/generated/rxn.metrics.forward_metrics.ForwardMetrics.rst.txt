@@ -1,0 +1,28 @@
+rxn.metrics.forward\_metrics.ForwardMetrics
+===========================================
+
+.. currentmodule:: rxn.metrics.forward_metrics
+
+.. autoclass:: ForwardMetrics
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ForwardMetrics.__init__
+      ~ForwardMetrics.from_metrics_files
+      ~ForwardMetrics.from_raw_files
+      ~ForwardMetrics.get_metrics
+   
+   
+
+   
+   
+   
