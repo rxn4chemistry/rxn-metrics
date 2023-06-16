@@ -12,7 +12,7 @@ from rxn.metrics.run_metrics import evaluate_metrics
     "--results_dir", required=True, help="Where the retro predictions are stored"
 )
 def main(task: str, results_dir: str) -> None:
-    """Evaluate the metrics (the metrics must have been generated already!)"""
+    """Evaluate the metrics (the predictions must have been generated already!)"""
 
     setup_console_logger()
 
