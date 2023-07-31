@@ -27,13 +27,14 @@ Python versions 3.9 and above are not expected to work due to compatibility with
 
 The package can be installed from Pypi:
 ```bash
-pip install rxn-metrics[rdkit]
+pip install rxn-metrics[rdkit,rxnmapper]
 ```
-You can leave out `[rdkit]` if RDKit is already available in your environment.
+You can leave out the extra dependency `rdkit` if RDKit is already available in your environment.
+Also, you can leave out the extra dependency `rxnmapper` if you don't plan on calculating the "true reactant" accuracy.
 
 For local development, the package can be installed with:
 ```bash
-pip install -e ".[dev,rdkit]"
+pip install -e ".[dev,rdkit,rxnmapper]"
 ```
 
 ## Calculation of metrics
