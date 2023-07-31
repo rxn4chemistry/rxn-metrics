@@ -77,7 +77,7 @@ def test_round_trip_accuracy() -> None:
         ["A", "0", "C"],
     ) == (
         {1: 2 / 3},
-        {1: np.std([1.0, 0.0, 1.0])},  # std
+        {1: float(np.std([1.0, 0.0, 1.0]))},  # std
     )
 
     # a few examples for top-2
@@ -89,7 +89,7 @@ def test_round_trip_accuracy() -> None:
             1: 1.0,
             2: 5 / 6,
         },
-        {1: np.std([1.0, 1.0, 1.0]), 2: np.std([1.0, 1.0, 0.5])},
+        {1: float(np.std([1.0, 1.0, 1.0])), 2: float(np.std([1.0, 1.0, 0.5]))},
     )
     assert round_trip_accuracy(
         ["A", "B", "C"],
@@ -99,7 +99,7 @@ def test_round_trip_accuracy() -> None:
             1: 1.0,
             2: 0.5,
         },
-        {1: np.std([1.0, 1.0, 1.0]), 2: np.std([0.5, 0.5, 0.5])},
+        {1: float(np.std([1.0, 1.0, 1.0])), 2: float(np.std([0.5, 0.5, 0.5]))},
     )
     assert round_trip_accuracy(
         ["A", "B", "C"],
@@ -109,7 +109,7 @@ def test_round_trip_accuracy() -> None:
             1: 0.0,
             2: 0.5,
         },
-        {1: np.std([0.0, 0.0, 0.0]), 2: np.std([0.5, 0.5, 0.5])},
+        {1: float(np.std([0.0, 0.0, 0.0])), 2: float(np.std([0.5, 0.5, 0.5]))},
     )
     assert round_trip_accuracy(
         ["A", "B", "C"],
@@ -119,7 +119,7 @@ def test_round_trip_accuracy() -> None:
             1: 1 / 3,
             2: 1 / 3,
         },
-        {1: np.std([0.0, 0.0, 1.0]), 2: np.std([0.0, 0.5, 0.5])},
+        {1: float(np.std([0.0, 0.0, 1.0])), 2: float(np.std([0.0, 0.5, 0.5]))},
     )
 
     # raises if not an exact multiple
@@ -139,7 +139,7 @@ def test_class_diversity() -> None:
         ["A", "B", "C"], ["A", "0", "C"], ["1.1.1", "2.2.2", "3.3.3"]
     ) == (
         {1: 2 / 3},
-        {1: np.std([1.0, 0.0, 1.0])},  # std
+        {1: float(np.std([1.0, 0.0, 1.0]))},  # std
     )
 
     # a few examples for top-2
@@ -152,7 +152,7 @@ def test_class_diversity() -> None:
             1: 1.0,
             2: 4 / 3,
         },
-        {1: np.std([1.0, 1.0, 1.0]), 2: np.std([1.0, 2.0, 1.0])},
+        {1: float(np.std([1.0, 1.0, 1.0])), 2: float(np.std([1.0, 2.0, 1.0]))},
     )
     assert class_diversity(
         ["A", "B", "C"],
@@ -163,7 +163,7 @@ def test_class_diversity() -> None:
             1: 1.0,
             2: 1.0,
         },
-        {1: np.std([1.0, 1.0, 1.0]), 2: np.std([1.0, 1.0, 1.0])},
+        {1: float(np.std([1.0, 1.0, 1.0])), 2: float(np.std([1.0, 1.0, 1.0]))},
     )
     assert class_diversity(
         ["A", "B", "C"],
@@ -174,7 +174,7 @@ def test_class_diversity() -> None:
             1: 0.0,
             2: 1.0,
         },
-        {1: np.std([0.0, 0.0, 0.0]), 2: np.std([1.0, 1.0, 1.0])},
+        {1: float(np.std([0.0, 0.0, 0.0])), 2: float(np.std([1.0, 1.0, 1.0]))},
     )
     assert class_diversity(
         ["A", "B", "C"],
@@ -185,7 +185,7 @@ def test_class_diversity() -> None:
             1: 1 / 3,
             2: 2 / 3,
         },
-        {1: np.std([0.0, 0.0, 1.0]), 2: np.std([0.0, 1.0, 1.0])},
+        {1: float(np.std([0.0, 0.0, 1.0])), 2: float(np.std([0.0, 1.0, 1.0]))},
     )
 
     # An example with invalid classes
@@ -198,7 +198,7 @@ def test_class_diversity() -> None:
             1: 0 / 3,
             2: 1 / 3,
         },
-        {1: np.std([0.0, 0.0, 0.0]), 2: np.std([0.0, 1.0, 0.0])},
+        {1: float(np.std([0.0, 0.0, 0.0])), 2: float(np.std([0.0, 1.0, 0.0]))},
     )
 
     # raises if not an exact multiple
