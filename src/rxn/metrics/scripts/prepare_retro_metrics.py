@@ -13,6 +13,10 @@ from rxn.metrics.class_tokens import maybe_prepare_class_token_files
 from rxn.metrics.classification_translation import maybe_classify_predictions
 from rxn.metrics.metrics_files import RetroFiles
 from rxn.metrics.run_metrics import evaluate_metrics
+from rxn.metrics.true_reactant_determination import (
+    true_reactant_environment_check,
+    maybe_determine_true_reactants,
+)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -60,7 +64,9 @@ logger.addHandler(logging.NullHandler())
 @click.option(
     "--n_best", default=10, type=int, help="Number of retro predictions to make (top-N)"
 )
-@click.option("--gpu", is_flag=True, help="If given, run the predictions on a GPU.")
+@click.option(
+    "--gpu/--no-gpu", default=False, help="Whether to run the predictions on a GPU."
+)
 @click.option(
     "--no_metrics", is_flag=True, help="If given, the metrics will not be computed."
 )
@@ -72,6 +78,20 @@ logger.addHandler(logging.NullHandler())
     default=None,
     type=int,
     help="The number of tokens used in the trainings",
+)
+@click.option(
+    "--with_true_reactant_accuracy/--no_true_reactant_accuracy",
+    default=False,
+    help="Whether to calculate the true reactant accuracy, based on rxnmapper.",
+)
+@click.option(
+    "--rxnmapper_batch_size",
+    default=8,
+    type=int,
+    help=(
+        "Batch size for RXNMapper. Considered "
+        "only if the true reactant accuracy is activated."
+    ),
 )
 def main(
     precursors_file: Path,
@@ -86,10 +106,13 @@ def main(
     no_metrics: bool,
     beam_size: int,
     class_tokens: Optional[int],
+    with_true_reactant_accuracy: bool,
+    rxnmapper_batch_size: int,
 ) -> None:
     """Starting from the ground truth files and two models (retro, forward),
     generate the translation files needed for the metrics, and calculate the default metrics.
     """
+    true_reactant_environment_check(with_true_reactant_accuracy)
 
     ensure_directory_exists_and_is_empty(output_dir)
     retro_files = RetroFiles(output_dir)
@@ -147,6 +170,9 @@ def main(
     )
 
     maybe_classify_predictions(classification_model, retro_files, batch_size, gpu)
+    maybe_determine_true_reactants(
+        with_true_reactant_accuracy, retro_files, rxnmapper_batch_size
+    )
 
     if not no_metrics:
         evaluate_metrics("retro", output_dir)
