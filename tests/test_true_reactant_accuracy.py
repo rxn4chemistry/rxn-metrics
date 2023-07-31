@@ -29,28 +29,28 @@ def test_true_reactant_accuracy() -> None:
     # To simplify the tests below: a few lists of reaction pairs.
     # a, b, c are "reactant-compatible reactions", while x, y, z aren't
     a = [  # different maps
-        "[CH3:7][CH2:5]O.N.[CH4:9]>>CON",
-        "[CH3:3][CH2:2]O.N.[CH4:1]>>CON",
+        "[CH3:7][CH2:5]O.N.C[CH3:9]>>CON",
+        "[CH3:3][CH2:2]O.N.C[CH3:1]>>CON",
     ]
     b = [  # different other reactants, different order, non-canonical
-        "[CH3:7][CH2:5]O.N.[CH4:9]>>CON",
-        "S.O.[CH4:1].O[CH2:3][CH3:2].>>CON",
+        "[CH3:7][CH2:5]O.N.N[CH3:9]>>CON",
+        "S.O.[CH3:1]N.O[CH2:3][CH3:2].>>CON",
     ]
     c = [  # other mapped atoms mapped on the same reactants
-        "[CH3:7][CH2:5]O.N.[CH4:9]>>CON",
-        "S.OO.CC[OH:8].[CH4:6]>>CON",
+        "[CH3:7][CH2:5]O.N.O[CH3:9]>>CON",
+        "S.OO.CC[OH:8].O[CH3:6]>>CON",
     ]
     x = [  # additional mapped compound in gt
-        "[CH3:7][CH2:5]O.N.[CH4:9].[OH2:1]>>CON",
-        "[CH3:3][CH2:2]O.N.[CH4:1]>>CON",
+        "[CH3:7][CH2:5]O.N.S[CH3:9].[OH2:1]>>CON",
+        "[CH3:3][CH2:2]O.N.S[CH3:1]>>CON",
     ]
     y = [  # additional mapped compound in pred
-        "[CH3:7][CH2:5]O.N.[CH4:9]>>CON",
-        "[CH3:3][CH2:2]O.N.[CH4:1].[OH2:1]>>CON",
+        "[CH3:7][CH2:5]O.N.P[CH3:9]>>CON",
+        "[CH3:3][CH2:2]O.N.P[CH3:1].[OH2:1]>>CON",
     ]
     z = [  # prediction has no maps
-        "[CH3:7][CH2:5]O.N.[CH4:9]>>CON",
-        "[CH3][CH2]O.N.[CH4]>>CON",
+        "[CH3:7][CH2:5]O.N.F[CH3:9]>>CON",
+        "[CH3][CH2]O.N.F[CH3]>>CON",
     ]
 
     # a few examples for top-1
@@ -66,3 +66,20 @@ def test_true_reactant_accuracy() -> None:
         [a[0], y[0], c[0]],
         [a[1], y[1], c[1]],
     ) == {1: 2 / 3}
+
+    # a few examples for top-2
+    # 1) correct predictions given first
+    assert true_reactant_accuracy(
+        [a[0], b[0], c[0]],
+        [a[1], x[1], b[1], y[1], c[1], z[1]],
+    ) == {1: 1.0, 2: 1.0}
+    # 2) correct prediction given first two times, and second one time
+    assert true_reactant_accuracy(
+        [a[0], b[0], c[0]],
+        [a[1], x[1], y[1], b[1], c[1], z[1]],
+    ) == {1: 2/3, 2: 1.0}
+    # 1) correct prediction given first one time, and second one time
+    assert true_reactant_accuracy(
+        [a[0], b[0], c[0]],
+        [x[1], a[1], x[1], z[1], c[1], z[1]],
+    ) == {1: 1 / 3, 2: 2/3}
