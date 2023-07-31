@@ -122,6 +122,11 @@ def true_reactant_accuracy(
 
     for gt, predictions in zip(ground_truth_mapped, prediction_chunks):
         gt_true_reactants = get_standardized_true_reactants(gt)
+
+        # if the ground truth has no mapping info: count as a negative
+        if gt_true_reactants is None:
+            continue
+
         pred_true_reactants = [get_standardized_true_reactants(p) for p in predictions]
         for i in range(multiplier):
             correct = gt_true_reactants in pred_true_reactants[: i + 1]

@@ -83,3 +83,9 @@ def test_true_reactant_accuracy() -> None:
         [a[0], b[0], c[0]],
         [x[1], a[1], x[1], z[1], c[1], z[1]],
     ) == {1: 1 / 3, 2: 2/3}
+
+    # If problem in the ground truth: count as incorrect! Here: no mapping
+    assert true_reactant_accuracy(
+        ["CC.O>>CCO"],
+        ["CC.O>>CCO"],
+    ) == {1: 0.0}
