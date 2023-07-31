@@ -18,8 +18,8 @@ def combine_precursors_and_products(
     """
 
     yield from (
-        f"{precuror_set}>>{product_set}"
-        for precuror_set, product_set in zip(precursors, products)
+        f"{precursor_set}>>{product_set}"
+        for precursor_set, product_set in zip(precursors, products)
     )
 
 
