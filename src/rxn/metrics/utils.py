@@ -1,6 +1,9 @@
-from typing import Iterator
+from typing import Iterator, Sequence, TypeVar
 
 from rxn.utilities.files import PathLike, iterate_lines_from_file
+from rxn.utilities.misc import get_multiplier
+
+T = TypeVar("T")
 
 
 def combine_precursors_and_products(
@@ -41,3 +44,17 @@ def combine_precursors_and_products_from_files(
         precursors=iterate_lines_from_file(precursors_file),
         products=iterate_lines_from_file(products_file),
     )
+
+
+def get_sequence_multiplier(ground_truth: Sequence[T], predictions: Sequence[T]) -> int:
+    """
+    Get the multiplier for the number of predictions by ground truth sample.
+
+    Raises:
+        ValueError: if the lists have inadequate sizes (possibly forwarded
+            from get_multiplier).
+    """
+    n_gt = len(ground_truth)
+    n_pred = len(predictions)
+
+    return get_multiplier(n_gt, n_pred)

@@ -4,10 +4,10 @@ import pytest
 from rxn.metrics.metrics import (
     class_diversity,
     coverage,
-    get_sequence_multiplier,
     round_trip_accuracy,
     top_n_accuracy,
 )
+from rxn.metrics.utils import get_sequence_multiplier
 
 
 def test_get_sequence_multiplier() -> None:

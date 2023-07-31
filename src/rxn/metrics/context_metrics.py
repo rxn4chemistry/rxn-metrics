@@ -5,9 +5,10 @@ from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
 from rxn.utilities.containers import chunker
 from rxn.utilities.files import PathLike, iterate_lines_from_file
 
-from .metrics import get_sequence_multiplier, top_n_accuracy
+from .metrics import top_n_accuracy
 from .metrics_calculator import MetricsCalculator
 from .metrics_files import ContextFiles, MetricsFiles
+from .utils import get_sequence_multiplier
 
 
 class ContextMetrics(MetricsCalculator):

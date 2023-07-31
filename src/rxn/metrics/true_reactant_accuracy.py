@@ -1,10 +1,11 @@
 import importlib.util
 import logging
+from typing import Dict, Sequence
 
 from rxn.utilities.files import dump_list_to_file
 
 from .metrics_files import RetroFiles
-from .utils import combine_precursors_and_products_from_files
+from .utils import combine_precursors_and_products_from_files, get_sequence_multiplier
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -62,3 +63,24 @@ def maybe_determine_true_reactants(
         mapper.map_reactions(predicted_reactions), retro_files.predicted_mapped
     )
     logger.info("Atom-mapping the predicted reactions... Done.")
+
+
+def true_reactant_accuracy(
+    ground_truth_mapped: Sequence[str], predictions_mapped: Sequence[str]
+) -> Dict[int, float]:
+    """
+    Compute the top-n "true reactant" accuracy values (i.e. discarding reagents).
+
+    Args:
+        ground_truth_mapped: list of atom-mapped reactions from the ground truth.
+        predictions_mapped: list of atom-mapped reactions from the predictions.
+
+    Raises:
+        ValueError: if the list sizes are incompatible, forwarded from get_sequence_multiplier().
+
+    Returns:
+        Dictionary of top-n accuracy values.
+    """
+    multiplier = get_sequence_multiplier(
+        ground_truth=ground_truth_mapped, predictions=predictions_mapped
+    )

@@ -13,9 +13,9 @@ from rxn.metrics.class_tokens import maybe_prepare_class_token_files
 from rxn.metrics.classification_translation import maybe_classify_predictions
 from rxn.metrics.metrics_files import RetroFiles
 from rxn.metrics.run_metrics import evaluate_metrics
-from rxn.metrics.true_reactant_determination import (
-    true_reactant_environment_check,
+from rxn.metrics.true_reactant_accuracy import (
     maybe_determine_true_reactants,
+    true_reactant_environment_check,
 )
 
 logger = logging.getLogger(__name__)
