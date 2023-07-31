@@ -51,6 +51,8 @@ class RetroFiles(MetricsFiles):
         )
         self.predicted_rxn_canonical = self.directory / "predicted_rxn_canonical.txt"
         self.predicted_classes = self.directory / "predicted_classes.txt"
+        self.gt_mapped = self.directory / "gt_mapped.txt"
+        self.predicted_mapped = self.directory / "predicted_mapped.txt"
 
     @staticmethod
     def reordered(path: PathLike) -> Path:

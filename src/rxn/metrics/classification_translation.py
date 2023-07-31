@@ -4,8 +4,14 @@ from typing import Optional, Union
 
 from rxn.chemutils.tokenization import file_is_tokenized, tokenize_file
 from rxn.onmt_utils import translate
-from rxn.utilities.files import is_path_exists_or_creatable
+from rxn.utilities.files import (
+    dump_list_to_file,
+    is_path_exists_or_creatable,
+    load_list_from_file,
+    raise_if_paths_are_identical,
+)
 
+from .metrics_files import RetroFiles
 from .tokenize_file import (
     classification_file_is_tokenized,
     detokenize_classification_file,
@@ -14,6 +20,56 @@ from .tokenize_file import (
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
+
+
+def maybe_classify_predictions(
+    classification_model: Optional[Path],
+    retro_files: RetroFiles,
+    batch_size: int,
+    gpu: bool,
+) -> None:
+    """Classify the reactions for determining the diversity metric.
+
+    Only executed if a classification model is available."""
+
+    if classification_model is None:
+        return
+
+    create_rxn_from_files(
+        retro_files.predicted_canonical,
+        retro_files.predicted_products_canonical,
+        retro_files.predicted_rxn_canonical,
+    )
+
+    # Classification
+    classification_translation(
+        src_file=retro_files.predicted_rxn_canonical,
+        tgt_file=None,
+        pred_file=retro_files.predicted_classes,
+        model=classification_model,
+        n_best=1,
+        beam_size=5,
+        batch_size=batch_size,
+        gpu=gpu,
+    )
+
+
+def create_rxn_from_files(
+    input_file_precursors: Union[str, Path],
+    input_file_products: Union[str, Path],
+    output_file: Union[str, Path],
+) -> None:
+    raise_if_paths_are_identical(input_file_precursors, output_file)
+    raise_if_paths_are_identical(input_file_products, output_file)
+    logger.info(
+        f'Combining files "{input_file_precursors}" and "{input_file_products}" -> "{output_file}".'
+    )
+
+    precursors = load_list_from_file(input_file_precursors)
+    products = load_list_from_file(input_file_products)
+
+    rxn = [f"{prec}>>{prod}" for prec, prod in zip(precursors, products)]
+    dump_list_to_file(rxn, output_file)
 
 
 def classification_translation(
