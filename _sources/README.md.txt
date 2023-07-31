@@ -6,7 +6,10 @@ This repository contains a Python package and associated scripts for training re
 This repository is closely related to [`rxn-onmt-models`](https://github.com/rxn4chemistry/rxn-onmt-models), which handles the training pipelines for these models.
 The repository also relies on other RXN packages; see [`rxn-utilities`](https://github.com/rxn4chemistry/rxn-utilities), [`rxn-chemutils`](https://github.com/rxn4chemistry/rxn-chemutils), and [`rxn-onmt-utils`](https://github.com/rxn4chemistry/rxn-onmt-utils).
 
-The documentation can be found [here](https://rxn4chemistry.github.io/rxn-metrics/).
+Links:
+* [GitHub repository](https://github.com/rxn4chemistry/rxn-metrics)
+* [Documentation](https://rxn4chemistry.github.io/rxn-metrics/)
+* [PyPI package](https://pypi.org/project/rxn-metrics/)
 
 This repository was produced through a collaborative project involving IBM Research Europe and Syngenta.
 
