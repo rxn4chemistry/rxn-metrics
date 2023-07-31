@@ -37,7 +37,6 @@ def maybe_classify_predictions(
         retro_files.predicted_rxn_canonical,
     )
 
-    # Classification
     classification_translation(
         src_file=retro_files.predicted_rxn_canonical,
         tgt_file=None,
