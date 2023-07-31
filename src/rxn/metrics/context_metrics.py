@@ -109,5 +109,5 @@ def fraction_of_identical_compounds(
             overlap = identical_fraction(gt, prediction)
             overlap_for_n[i].append(overlap)
 
-    accuracy = {i + 1: np.mean(overlap_for_n[i]) for i in range(multiplier)}
+    accuracy = {i + 1: float(np.mean(overlap_for_n[i])) for i in range(multiplier)}
     return accuracy

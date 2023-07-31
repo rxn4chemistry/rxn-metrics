@@ -72,8 +72,12 @@ def round_trip_accuracy(
             correct_for_n[i].append(correct_values)
 
     # Note: for the "n"-th value, we must divide by "n=i+1" because the list elements were not averaged.
-    accuracy = {i + 1: np.mean(correct_for_n[i]) / (i + 1) for i in range(multiplier)}
-    std_dev = {i + 1: np.std(correct_for_n[i]) / (i + 1) for i in range(multiplier)}
+    accuracy = {
+        i + 1: float(np.mean(correct_for_n[i])) / (i + 1) for i in range(multiplier)
+    }
+    std_dev = {
+        i + 1: float(np.std(correct_for_n[i])) / (i + 1) for i in range(multiplier)
+    }
     return accuracy, std_dev
 
 
@@ -152,8 +156,10 @@ def class_diversity(
 
     # Note: the total number of predictions to take into account for the "n"-th (= "i+1"th)
     # value is "len(ground_truth)". A value < 1 is the consequence of having incorrect predictions
-    classdiversity = {i + 1: np.mean(classes_for_n[i]) for i in range(multiplier)}
-    std_dev = {i + 1: np.std(classes_for_n[i]) for i in range(multiplier)}
+    classdiversity = {
+        i + 1: float(np.mean(classes_for_n[i])) for i in range(multiplier)
+    }
+    std_dev = {i + 1: float(np.std(classes_for_n[i])) for i in range(multiplier)}
     return classdiversity, std_dev
 
 
