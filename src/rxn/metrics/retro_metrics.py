@@ -1,6 +1,6 @@
 from typing import Any, Dict, Iterable, List, Optional
 
-from rxn.utilities.files import PathLike, iterate_lines_from_file
+from rxn.utilities.files import PathLike, iterate_lines_from_file, load_list_from_file
 
 from .metrics import class_diversity, coverage, round_trip_accuracy, top_n_accuracy
 from .metrics_calculator import MetricsCalculator
@@ -22,25 +22,18 @@ class RetroMetrics(MetricsCalculator):
         gt_products: Iterable[str],
         predicted_precursors: Iterable[str],
         predicted_products: Iterable[str],
-        predicted_classes: Optional[Iterable[str]] = None,
-        gt_mapped_rxns: Optional[Iterable[str]] = None,
-        predicted_mapped_rxns: Optional[Iterable[str]] = None,
+        predicted_classes: Optional[List[str]] = None,
+        gt_mapped_rxns: Optional[List[str]] = None,
+        predicted_mapped_rxns: Optional[List[str]] = None,
     ):
         self.gt_products = list(gt_products)
         self.gt_precursors = list(gt_precursors)
         self.predicted_products = list(predicted_products)
         self.predicted_precursors = list(predicted_precursors)
 
-        def maybe_convert_to_list(
-            iterator: Optional[Iterable[str]],
-        ) -> Optional[List[str]]:
-            if iterator is None:
-                return None
-            return list(iterator)
-
-        self.predicted_classes = maybe_convert_to_list(predicted_classes)
-        self.gt_mapped_rxns = maybe_convert_to_list(gt_mapped_rxns)
-        self.predicted_mapped_rxns = maybe_convert_to_list(predicted_mapped_rxns)
+        self.predicted_classes = predicted_classes
+        self.gt_mapped_rxns = gt_mapped_rxns
+        self.predicted_mapped_rxns = predicted_mapped_rxns
 
     def get_metrics(self) -> Dict[str, Any]:
         topn = top_n_accuracy(
@@ -126,19 +119,18 @@ class RetroMetrics(MetricsCalculator):
         gt_mapped_rxns_file: Optional[PathLike] = None,
         predicted_mapped_rxns_file: Optional[PathLike] = None,
     ) -> "RetroMetrics":
-        def maybe_iterate_lines(
-            filename: Optional[PathLike],
-        ) -> Optional[Iterable[str]]:
+        # to simplify because it is called multiple times.
+        def maybe_load_lines(filename: Optional[PathLike]) -> Optional[List[str]]:
             if filename is None:
                 return None
-            yield from iterate_lines_from_file(filename)
+            return load_list_from_file(filename)
 
         return cls(
             gt_precursors=iterate_lines_from_file(gt_precursors_file),
             gt_products=iterate_lines_from_file(gt_products_file),
             predicted_precursors=iterate_lines_from_file(predicted_precursors_file),
             predicted_products=iterate_lines_from_file(predicted_products_file),
-            predicted_classes=maybe_iterate_lines(predicted_classes_file),
-            gt_mapped_rxns=maybe_iterate_lines(gt_mapped_rxns_file),
-            predicted_mapped_rxns=maybe_iterate_lines(predicted_mapped_rxns_file),
+            predicted_classes=maybe_load_lines(predicted_classes_file),
+            gt_mapped_rxns=maybe_load_lines(gt_mapped_rxns_file),
+            predicted_mapped_rxns=maybe_load_lines(predicted_mapped_rxns_file),
         )
