@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files &mdash; RXN metrics 0.1 documentation</title>
+  <title>rxn.metrics.class_tokens.maybe_prepare_class_token_files &mdash; RXN metrics 0.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="rxn.metrics.scripts.reorder_retro_predictions_class_token" href="rxn.metrics.scripts.reorder_retro_predictions_class_token.html" />
-    <link rel="prev" title="rxn.metrics.scripts.prepare_retro_metrics" href="rxn.metrics.scripts.prepare_retro_metrics.html" /> 
+    <link rel="next" title="rxn.metrics.classification_translation" href="rxn.metrics.classification_translation.html" />
+    <link rel="prev" title="rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models" href="rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,6 +42,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="rxn.metrics.html">rxn.metrics</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="rxn.metrics.class_tokens.html">rxn.metrics.class_tokens</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models.html">rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">rxn.metrics.class_tokens.maybe_prepare_class_token_files</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.classification_translation.html">rxn.metrics.classification_translation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.context_metrics.html">rxn.metrics.context_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.forward_metrics.html">rxn.metrics.forward_metrics</a></li>
@@ -50,18 +55,9 @@
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.metrics_files.html">rxn.metrics.metrics_files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.retro_metrics.html">rxn.metrics.retro_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.run_metrics.html">rxn.metrics.run_metrics</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="rxn.metrics.scripts.html">rxn.metrics.scripts</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.ensure_data_dimension.html">rxn.metrics.scripts.ensure_data_dimension</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.join_data_files.html">rxn.metrics.scripts.join_data_files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.parse_metrics_into_csv.html">rxn.metrics.scripts.parse_metrics_into_csv</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.prepare_context_metrics.html">rxn.metrics.scripts.prepare_context_metrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.prepare_forward_metrics.html">rxn.metrics.scripts.prepare_forward_metrics</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="rxn.metrics.scripts.prepare_retro_metrics.html">rxn.metrics.scripts.prepare_retro_metrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.reorder_retro_predictions_class_token.html">rxn.metrics.scripts.reorder_retro_predictions_class_token</a></li>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.scripts.rxn_evaluate_metrics.html">rxn.metrics.scripts.rxn_evaluate_metrics</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.scripts.html">rxn.metrics.scripts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.tokenize_file.html">rxn.metrics.tokenize_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.true_reactant_accuracy.html">rxn.metrics.true_reactant_accuracy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.utils.html">rxn.metrics.utils</a></li>
 </ul>
 </li>
@@ -85,11 +81,10 @@
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../api.html">API</a> &raquo;</li>
           <li><a href="rxn.metrics.html">rxn.metrics</a> &raquo;</li>
-          <li><a href="rxn.metrics.scripts.html">rxn.metrics.scripts</a> &raquo;</li>
-          <li><a href="rxn.metrics.scripts.prepare_retro_metrics.html">rxn.metrics.scripts.prepare_retro_metrics</a> &raquo;</li>
-      <li>rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files</li>
+          <li><a href="rxn.metrics.class_tokens.html">rxn.metrics.class_tokens</a> &raquo;</li>
+      <li>rxn.metrics.class_tokens.maybe_prepare_class_token_files</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/generated/rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/generated/rxn.metrics.class_tokens.maybe_prepare_class_token_files.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -97,17 +92,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="rxn-metrics-scripts-prepare-retro-metrics-create-rxn-from-files">
-<h1>rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files<a class="headerlink" href="#rxn-metrics-scripts-prepare-retro-metrics-create-rxn-from-files" title="Permalink to this heading"></a></h1>
+  <section id="rxn-metrics-class-tokens-maybe-prepare-class-token-files">
+<h1>rxn.metrics.class_tokens.maybe_prepare_class_token_files<a class="headerlink" href="#rxn-metrics-class-tokens-maybe-prepare-class-token-files" title="Permalink to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files">
-<span class="sig-prename descclassname"><span class="pre">rxn.metrics.scripts.prepare_retro_metrics.</span></span><span class="sig-name descname"><span class="pre">create_rxn_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file_precursors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_products</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rxn/metrics/scripts/prepare_retro_metrics.html#create_rxn_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rxn.metrics.scripts.prepare_retro_metrics.create_rxn_from_files" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="rxn.metrics.class_tokens.maybe_prepare_class_token_files">
+<span class="sig-prename descclassname"><span class="pre">rxn.metrics.class_tokens.</span></span><span class="sig-name descname"><span class="pre">maybe_prepare_class_token_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rxn/metrics/class_tokens.html#maybe_prepare_class_token_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rxn.metrics.class_tokens.maybe_prepare_class_token_files" title="Permalink to this definition"></a></dt>
+<dd><p>If the model is a class-token one, create the expected src and target files.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_file_precursors</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – </p></li>
-<li><p><strong>input_file_products</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – </p></li>
-<li><p><strong>output_file</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – </p></li>
+<li><p><strong>class_tokens</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – the number of tokens used in the trainings.</p></li>
+<li><p><strong>retro_files</strong> (<a class="reference internal" href="rxn.metrics.metrics_files.RetroFiles.html#rxn.metrics.metrics_files.RetroFiles" title="rxn.metrics.metrics_files.RetroFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">RetroFiles</span></code></a>) – information on the location of files for the metrics.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -122,8 +117,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="rxn.metrics.scripts.prepare_retro_metrics.html" class="btn btn-neutral float-left" title="rxn.metrics.scripts.prepare_retro_metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rxn.metrics.scripts.reorder_retro_predictions_class_token.html" class="btn btn-neutral float-right" title="rxn.metrics.scripts.reorder_retro_predictions_class_token" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models.html" class="btn btn-neutral float-left" title="rxn.metrics.class_tokens.convert_class_token_idx_for_translation_models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rxn.metrics.classification_translation.html" class="btn btn-neutral float-right" title="rxn.metrics.classification_translation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

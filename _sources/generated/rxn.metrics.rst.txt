@@ -28,6 +28,7 @@
    :template: custom-module-template.rst
    :recursive:
 
+   rxn.metrics.class_tokens
    rxn.metrics.classification_translation
    rxn.metrics.context_metrics
    rxn.metrics.forward_metrics
@@ -38,5 +39,6 @@
    rxn.metrics.run_metrics
    rxn.metrics.scripts
    rxn.metrics.tokenize_file
+   rxn.metrics.true_reactant_accuracy
    rxn.metrics.utils
 

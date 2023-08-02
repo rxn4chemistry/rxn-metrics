@@ -94,17 +94,18 @@ It has been tested on the following systems:</p>
 <li><p>Linux: Ubuntu 18.04.4</p></li>
 </ul>
 <p>A Python version of 3.6, 3.7, or 3.8 is recommended.
-Python versions 3.9 and above are not expected to work due to compatibility with the selected version of OpenNMT.</p>
+Python versions 3.9 and above are not expe`cted to work due to compatibility with the selected version of OpenNMT.</p>
 </section>
 <section id="installation-guide">
 <h2>Installation guide<a class="headerlink" href="#installation-guide" title="Permalink to this heading"></a></h2>
 <p>The package can be installed from Pypi:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>rxn-metrics<span class="o">[</span>rdkit<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>rxn-metrics<span class="o">[</span>rdkit,rxnmapper<span class="o">]</span>
 </pre></div>
 </div>
-<p>You can leave out <code class="docutils literal notranslate"><span class="pre">[rdkit]</span></code> if RDKit is already available in your environment.</p>
+<p>You can leave out the extra dependency <code class="docutils literal notranslate"><span class="pre">rdkit</span></code> if RDKit is already available in your environment.
+Also, you can leave out the extra dependency <code class="docutils literal notranslate"><span class="pre">rxnmapper</span></code> if you don’t plan on calculating the “true reactant” accuracy.</p>
 <p>For local development, the package can be installed with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,rdkit]&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,rdkit,rxnmapper]&quot;</span>
 </pre></div>
 </div>
 </section>

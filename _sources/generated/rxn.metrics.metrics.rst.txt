@@ -16,7 +16,6 @@ rxn.metrics.metrics
    
       class_diversity
       coverage
-      get_sequence_multiplier
       round_trip_accuracy
       top_n_accuracy
    

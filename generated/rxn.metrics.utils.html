@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models" href="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models.html" />
-    <link rel="prev" title="rxn.metrics.tokenize_file.tokenize_classification_file" href="rxn.metrics.tokenize_file.tokenize_classification_file.html" /> 
+    <link rel="next" title="rxn.metrics.utils.combine_precursors_and_products" href="rxn.metrics.utils.combine_precursors_and_products.html" />
+    <link rel="prev" title="rxn.metrics.true_reactant_accuracy.true_reactant_environment_check" href="rxn.metrics.true_reactant_accuracy.true_reactant_environment_check.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,6 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="rxn.metrics.html">rxn.metrics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.class_tokens.html">rxn.metrics.class_tokens</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.classification_translation.html">rxn.metrics.classification_translation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.context_metrics.html">rxn.metrics.context_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.forward_metrics.html">rxn.metrics.forward_metrics</a></li>
@@ -52,8 +53,11 @@
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.run_metrics.html">rxn.metrics.run_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.scripts.html">rxn.metrics.scripts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.tokenize_file.html">rxn.metrics.tokenize_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.true_reactant_accuracy.html">rxn.metrics.true_reactant_accuracy</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">rxn.metrics.utils</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models.html">rxn.metrics.utils.convert_class_token_idx_for_tranlation_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.utils.combine_precursors_and_products.html">rxn.metrics.utils.combine_precursors_and_products</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.utils.combine_precursors_and_products_from_files.html">rxn.metrics.utils.combine_precursors_and_products_from_files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.utils.get_sequence_multiplier.html">rxn.metrics.utils.get_sequence_multiplier</a></li>
 </ul>
 </li>
 </ul>
@@ -97,12 +101,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models.html#rxn.metrics.utils.convert_class_token_idx_for_tranlation_models" title="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_class_token_idx_for_tranlation_models</span></code></a>(...)</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param class_token_idx</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.utils.combine_precursors_and_products.html#rxn.metrics.utils.combine_precursors_and_products" title="rxn.metrics.utils.combine_precursors_and_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_precursors_and_products</span></code></a>(precursors, ...)</p></td>
+<td><p>Combine two matching iterables of precursors/products into an iterator of reaction SMILES.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.utils.combine_precursors_and_products_from_files.html#rxn.metrics.utils.combine_precursors_and_products_from_files" title="rxn.metrics.utils.combine_precursors_and_products_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_precursors_and_products_from_files</span></code></a>(...)</p></td>
+<td><p>Combine the precursors file and the products file into an iterator of reaction SMILES.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.utils.get_sequence_multiplier.html#rxn.metrics.utils.get_sequence_multiplier" title="rxn.metrics.utils.get_sequence_multiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sequence_multiplier</span></code></a>(ground_truth, ...)</p></td>
+<td><p>Get the multiplier for the number of predictions by ground truth sample.</p></td>
 </tr>
 </tbody>
 </table>
@@ -112,8 +118,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="rxn.metrics.tokenize_file.tokenize_classification_file.html" class="btn btn-neutral float-left" title="rxn.metrics.tokenize_file.tokenize_classification_file" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models.html" class="btn btn-neutral float-right" title="rxn.metrics.utils.convert_class_token_idx_for_tranlation_models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rxn.metrics.true_reactant_accuracy.true_reactant_environment_check.html" class="btn btn-neutral float-left" title="rxn.metrics.true_reactant_accuracy.true_reactant_environment_check" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rxn.metrics.utils.combine_precursors_and_products.html" class="btn btn-neutral float-right" title="rxn.metrics.utils.combine_precursors_and_products" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

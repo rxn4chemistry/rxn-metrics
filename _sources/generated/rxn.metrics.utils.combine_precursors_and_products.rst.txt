@@ -1,0 +1,6 @@
+rxn.metrics.utils.combine\_precursors\_and\_products
+====================================================
+
+.. currentmodule:: rxn.metrics.utils
+
+.. autofunction:: combine_precursors_and_products

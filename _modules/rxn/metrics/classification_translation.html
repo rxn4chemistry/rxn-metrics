@@ -71,16 +71,66 @@
 
 <span class="kn">from</span> <span class="nn">rxn.chemutils.tokenization</span> <span class="kn">import</span> <span class="n">file_is_tokenized</span><span class="p">,</span> <span class="n">tokenize_file</span>
 <span class="kn">from</span> <span class="nn">rxn.onmt_utils</span> <span class="kn">import</span> <span class="n">translate</span>
-<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="n">is_path_exists_or_creatable</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="n">dump_list_to_file</span><span class="p">,</span> <span class="n">is_path_exists_or_creatable</span>
 
+<span class="kn">from</span> <span class="nn">.metrics_files</span> <span class="kn">import</span> <span class="n">RetroFiles</span>
 <span class="kn">from</span> <span class="nn">.tokenize_file</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">classification_file_is_tokenized</span><span class="p">,</span>
     <span class="n">detokenize_classification_file</span><span class="p">,</span>
     <span class="n">tokenize_classification_file</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">combine_precursors_and_products_from_files</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="maybe_classify_predictions"><a class="viewcode-back" href="../../../generated/rxn.metrics.classification_translation.maybe_classify_predictions.html#rxn.metrics.classification_translation.maybe_classify_predictions">[docs]</a><span class="k">def</span> <span class="nf">maybe_classify_predictions</span><span class="p">(</span>
+    <span class="n">classification_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">retro_files</span><span class="p">:</span> <span class="n">RetroFiles</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify the reactions for determining the diversity metric.</span>
+
+<span class="sd">    Only executed if a classification model is available.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">classification_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">create_rxn_from_files</span><span class="p">(</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_canonical</span><span class="p">,</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_products_canonical</span><span class="p">,</span>
+        <span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_rxn_canonical</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">classification_translation</span><span class="p">(</span>
+        <span class="n">src_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_rxn_canonical</span><span class="p">,</span>
+        <span class="n">tgt_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pred_file</span><span class="o">=</span><span class="n">retro_files</span><span class="o">.</span><span class="n">predicted_classes</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">classification_model</span><span class="p">,</span>
+        <span class="n">n_best</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_rxn_from_files"><a class="viewcode-back" href="../../../generated/rxn.metrics.classification_translation.create_rxn_from_files.html#rxn.metrics.classification_translation.create_rxn_from_files">[docs]</a><span class="k">def</span> <span class="nf">create_rxn_from_files</span><span class="p">(</span>
+    <span class="n">input_file_precursors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">input_file_products</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Combining files &quot;</span><span class="si">{</span><span class="n">input_file_precursors</span><span class="si">}</span><span class="s1">&quot; and &quot;</span><span class="si">{</span><span class="n">input_file_products</span><span class="si">}</span><span class="s1">&quot; -&gt; &quot;</span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">dump_list_to_file</span><span class="p">(</span>
+        <span class="n">combine_precursors_and_products_from_files</span><span class="p">(</span>
+            <span class="n">precursors_file</span><span class="o">=</span><span class="n">input_file_precursors</span><span class="p">,</span>
+            <span class="n">products_file</span><span class="o">=</span><span class="n">input_file_products</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">output_file</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="classification_translation"><a class="viewcode-back" href="../../../generated/rxn.metrics.classification_translation.classification_translation.html#rxn.metrics.classification_translation.classification_translation">[docs]</a><span class="k">def</span> <span class="nf">classification_translation</span><span class="p">(</span>

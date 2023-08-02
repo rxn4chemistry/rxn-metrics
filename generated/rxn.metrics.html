@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="rxn.metrics.classification_translation" href="rxn.metrics.classification_translation.html" />
+    <link rel="next" title="rxn.metrics.class_tokens" href="rxn.metrics.class_tokens.html" />
     <link rel="prev" title="API" href="../api.html" /> 
 </head>
 
@@ -42,6 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">rxn.metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.class_tokens.html">rxn.metrics.class_tokens</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.classification_translation.html">rxn.metrics.classification_translation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.context_metrics.html">rxn.metrics.context_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.forward_metrics.html">rxn.metrics.forward_metrics</a></li>
@@ -52,6 +53,7 @@
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.run_metrics.html">rxn.metrics.run_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.scripts.html">rxn.metrics.scripts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.tokenize_file.html">rxn.metrics.tokenize_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.true_reactant_accuracy.html">rxn.metrics.true_reactant_accuracy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.utils.html">rxn.metrics.utils</a></li>
 </ul>
 </li>
@@ -93,34 +95,40 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.classification_translation.html#module-rxn.metrics.classification_translation" title="rxn.metrics.classification_translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.classification_translation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.class_tokens.html#module-rxn.metrics.class_tokens" title="rxn.metrics.class_tokens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.class_tokens</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.context_metrics.html#module-rxn.metrics.context_metrics" title="rxn.metrics.context_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.context_metrics</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.classification_translation.html#module-rxn.metrics.classification_translation" title="rxn.metrics.classification_translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.classification_translation</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.forward_metrics.html#module-rxn.metrics.forward_metrics" title="rxn.metrics.forward_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.forward_metrics</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.context_metrics.html#module-rxn.metrics.context_metrics" title="rxn.metrics.context_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.context_metrics</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.metrics.html#module-rxn.metrics.metrics" title="rxn.metrics.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.forward_metrics.html#module-rxn.metrics.forward_metrics" title="rxn.metrics.forward_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.forward_metrics</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.metrics.html#module-rxn.metrics.metrics" title="rxn.metrics.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics</span></code></a></p></td>
 <td><p>Definition of the different metrics.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.metrics_calculator.html#module-rxn.metrics.metrics_calculator" title="rxn.metrics.metrics_calculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics_calculator</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.metrics_calculator.html#module-rxn.metrics.metrics_calculator" title="rxn.metrics.metrics_calculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics_calculator</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.metrics_files.html#module-rxn.metrics.metrics_files" title="rxn.metrics.metrics_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics_files</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.metrics_files.html#module-rxn.metrics.metrics_files" title="rxn.metrics.metrics_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.metrics_files</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.retro_metrics.html#module-rxn.metrics.retro_metrics" title="rxn.metrics.retro_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.retro_metrics</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.retro_metrics.html#module-rxn.metrics.retro_metrics" title="rxn.metrics.retro_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.retro_metrics</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.run_metrics.html#module-rxn.metrics.run_metrics" title="rxn.metrics.run_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.run_metrics</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.run_metrics.html#module-rxn.metrics.run_metrics" title="rxn.metrics.run_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.run_metrics</span></code></a></p></td>
 <td><p>Functions to launch metrics calculations on forward, retro, or context models.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.scripts.html#module-rxn.metrics.scripts" title="rxn.metrics.scripts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.scripts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.scripts.html#module-rxn.metrics.scripts" title="rxn.metrics.scripts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.scripts</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.tokenize_file.html#module-rxn.metrics.tokenize_file" title="rxn.metrics.tokenize_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.tokenize_file</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.tokenize_file.html#module-rxn.metrics.tokenize_file" title="rxn.metrics.tokenize_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.tokenize_file</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.true_reactant_accuracy.html#module-rxn.metrics.true_reactant_accuracy" title="rxn.metrics.true_reactant_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.true_reactant_accuracy</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.utils.html#module-rxn.metrics.utils" title="rxn.metrics.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxn.metrics.utils</span></code></a></p></td>
@@ -135,7 +143,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rxn.metrics.classification_translation.html" class="btn btn-neutral float-right" title="rxn.metrics.classification_translation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rxn.metrics.class_tokens.html" class="btn btn-neutral float-right" title="rxn.metrics.class_tokens" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

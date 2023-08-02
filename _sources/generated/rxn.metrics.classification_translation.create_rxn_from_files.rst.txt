@@ -1,0 +1,6 @@
+rxn.metrics.classification\_translation.create\_rxn\_from\_files
+================================================================
+
+.. currentmodule:: rxn.metrics.classification_translation
+
+.. autofunction:: create_rxn_from_files

@@ -15,6 +15,8 @@ rxn.metrics.classification\_translation
       :toctree:
    
       classification_translation
+      create_rxn_from_files
+      maybe_classify_predictions
    
    
 

@@ -14,7 +14,9 @@ rxn.metrics.utils
    .. autosummary::
       :toctree:
    
-      convert_class_token_idx_for_tranlation_models
+      combine_precursors_and_products
+      combine_precursors_and_products_from_files
+      get_sequence_multiplier
    
    
 

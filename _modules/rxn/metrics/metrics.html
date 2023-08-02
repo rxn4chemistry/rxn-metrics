@@ -73,7 +73,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">rxn.utilities.containers</span> <span class="kn">import</span> <span class="n">chunker</span>
-<span class="kn">from</span> <span class="nn">rxn.utilities.misc</span> <span class="kn">import</span> <span class="n">get_multiplier</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_sequence_multiplier</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
@@ -228,20 +229,6 @@
     <span class="p">}</span>
     <span class="n">std_dev</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">classes_for_n</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)}</span>
     <span class="k">return</span> <span class="n">classdiversity</span><span class="p">,</span> <span class="n">std_dev</span></div>
-
-
-<div class="viewcode-block" id="get_sequence_multiplier"><a class="viewcode-back" href="../../../generated/rxn.metrics.metrics.get_sequence_multiplier.html#rxn.metrics.metrics.get_sequence_multiplier">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_multiplier</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the multiplier for the number of predictions by ground truth sample.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: if the lists have inadequate sizes (possibly forwarded</span>
-<span class="sd">            from get_multiplier).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_gt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
-    <span class="n">n_pred</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">get_multiplier</span><span class="p">(</span><span class="n">n_gt</span><span class="p">,</span> <span class="n">n_pred</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

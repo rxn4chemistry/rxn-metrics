@@ -1,0 +1,6 @@
+rxn.metrics.classification\_translation.maybe\_classify\_predictions
+====================================================================
+
+.. currentmodule:: rxn.metrics.classification_translation
+
+.. autofunction:: maybe_classify_predictions

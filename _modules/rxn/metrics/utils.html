@@ -65,8 +65,81 @@
            <div itemprop="articleBody">
              
   <h1>Source code for rxn.metrics.utils</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="convert_class_token_idx_for_tranlation_models"><a class="viewcode-back" href="../../../generated/rxn.metrics.utils.convert_class_token_idx_for_tranlation_models.html#rxn.metrics.utils.convert_class_token_idx_for_tranlation_models">[docs]</a><span></span><span class="k">def</span> <span class="nf">convert_class_token_idx_for_tranlation_models</span><span class="p">(</span><span class="n">class_token_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">class_token_idx</span><span class="si">}</span><span class="s2">]&quot;</span></div>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span> <span class="nn">rxn.chemutils.reaction_combiner</span> <span class="kn">import</span> <span class="n">ReactionCombiner</span>
+<span class="kn">from</span> <span class="nn">rxn.chemutils.reaction_smiles</span> <span class="kn">import</span> <span class="n">ReactionFormat</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.files</span> <span class="kn">import</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">count_lines</span><span class="p">,</span> <span class="n">iterate_lines_from_file</span>
+<span class="kn">from</span> <span class="nn">rxn.utilities.misc</span> <span class="kn">import</span> <span class="n">get_multiplier</span><span class="p">,</span> <span class="n">get_multipliers</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="combine_precursors_and_products"><a class="viewcode-back" href="../../../generated/rxn.metrics.utils.combine_precursors_and_products.html#rxn.metrics.utils.combine_precursors_and_products">[docs]</a><span class="k">def</span> <span class="nf">combine_precursors_and_products</span><span class="p">(</span>
+    <span class="n">precursors</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">products</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">total_precursors</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">total_products</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combine two matching iterables of precursors/products into an iterator of reaction SMILES.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        precursors: iterable of sets of precursors.</span>
+<span class="sd">        products: iterable of sets of products.</span>
+<span class="sd">        total_precursors: total number of precursors.</span>
+<span class="sd">        total_products: total number of products.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterator over reaction SMILES.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">combiner</span> <span class="o">=</span> <span class="n">ReactionCombiner</span><span class="p">(</span><span class="n">reaction_format</span><span class="o">=</span><span class="n">ReactionFormat</span><span class="o">.</span><span class="n">STANDARD_WITH_TILDE</span><span class="p">)</span>
+
+    <span class="n">precursor_multiplier</span><span class="p">,</span> <span class="n">product_multiplier</span> <span class="o">=</span> <span class="n">get_multipliers</span><span class="p">(</span>
+        <span class="n">total_precursors</span><span class="p">,</span> <span class="n">total_products</span>
+    <span class="p">)</span>
+
+    <span class="k">yield from</span> <span class="n">combiner</span><span class="o">.</span><span class="n">combine_iterators</span><span class="p">(</span>
+        <span class="n">precursors</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">precursor_multiplier</span><span class="p">,</span> <span class="n">product_multiplier</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="combine_precursors_and_products_from_files"><a class="viewcode-back" href="../../../generated/rxn.metrics.utils.combine_precursors_and_products_from_files.html#rxn.metrics.utils.combine_precursors_and_products_from_files">[docs]</a><span class="k">def</span> <span class="nf">combine_precursors_and_products_from_files</span><span class="p">(</span>
+    <span class="n">precursors_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">products_file</span><span class="p">:</span> <span class="n">PathLike</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combine the precursors file and the products file into an iterator of reaction SMILES.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        precursors_file: file containing the sets of precursors.</span>
+<span class="sd">        products_file: file containing the sets of products.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterator over reaction SMILES.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_precursors</span> <span class="o">=</span> <span class="n">count_lines</span><span class="p">(</span><span class="n">precursors_file</span><span class="p">)</span>
+    <span class="n">n_products</span> <span class="o">=</span> <span class="n">count_lines</span><span class="p">(</span><span class="n">products_file</span><span class="p">)</span>
+
+    <span class="k">yield from</span> <span class="n">combine_precursors_and_products</span><span class="p">(</span>
+        <span class="n">precursors</span><span class="o">=</span><span class="n">iterate_lines_from_file</span><span class="p">(</span><span class="n">precursors_file</span><span class="p">),</span>
+        <span class="n">products</span><span class="o">=</span><span class="n">iterate_lines_from_file</span><span class="p">(</span><span class="n">products_file</span><span class="p">),</span>
+        <span class="n">total_precursors</span><span class="o">=</span><span class="n">n_precursors</span><span class="p">,</span>
+        <span class="n">total_products</span><span class="o">=</span><span class="n">n_products</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_sequence_multiplier"><a class="viewcode-back" href="../../../generated/rxn.metrics.utils.get_sequence_multiplier.html#rxn.metrics.utils.get_sequence_multiplier">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_multiplier</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the multiplier for the number of predictions by ground truth sample.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the lists have inadequate sizes (possibly forwarded</span>
+<span class="sd">            from get_multiplier).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_gt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
+    <span class="n">n_pred</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">get_multiplier</span><span class="p">(</span><span class="n">n_gt</span><span class="p">,</span> <span class="n">n_pred</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

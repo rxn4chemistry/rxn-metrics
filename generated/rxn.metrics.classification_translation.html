@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="rxn.metrics.classification_translation.classification_translation" href="rxn.metrics.classification_translation.classification_translation.html" />
-    <link rel="prev" title="rxn.metrics" href="rxn.metrics.html" /> 
+    <link rel="prev" title="rxn.metrics.class_tokens.maybe_prepare_class_token_files" href="rxn.metrics.class_tokens.maybe_prepare_class_token_files.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,8 +42,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="rxn.metrics.html">rxn.metrics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.class_tokens.html">rxn.metrics.class_tokens</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">rxn.metrics.classification_translation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="rxn.metrics.classification_translation.classification_translation.html">rxn.metrics.classification_translation.classification_translation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.classification_translation.create_rxn_from_files.html">rxn.metrics.classification_translation.create_rxn_from_files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rxn.metrics.classification_translation.maybe_classify_predictions.html">rxn.metrics.classification_translation.maybe_classify_predictions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.context_metrics.html">rxn.metrics.context_metrics</a></li>
@@ -55,6 +58,7 @@
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.run_metrics.html">rxn.metrics.run_metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.scripts.html">rxn.metrics.scripts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.tokenize_file.html">rxn.metrics.tokenize_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rxn.metrics.true_reactant_accuracy.html">rxn.metrics.true_reactant_accuracy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rxn.metrics.utils.html">rxn.metrics.utils</a></li>
 </ul>
 </li>
@@ -100,6 +104,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.classification_translation.classification_translation.html#rxn.metrics.classification_translation.classification_translation" title="rxn.metrics.classification_translation.classification_translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classification_translation</span></code></a>(src_file, ...[, ...])</p></td>
 <td><p>Do a classification translation.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="rxn.metrics.classification_translation.create_rxn_from_files.html#rxn.metrics.classification_translation.create_rxn_from_files" title="rxn.metrics.classification_translation.create_rxn_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_rxn_from_files</span></code></a>(input_file_precursors, ...)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param input_file_precursors</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="rxn.metrics.classification_translation.maybe_classify_predictions.html#rxn.metrics.classification_translation.maybe_classify_predictions" title="rxn.metrics.classification_translation.maybe_classify_predictions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maybe_classify_predictions</span></code></a>(...)</p></td>
+<td><p>Classify the reactions for determining the diversity metric.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -108,7 +122,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="rxn.metrics.html" class="btn btn-neutral float-left" title="rxn.metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rxn.metrics.class_tokens.maybe_prepare_class_token_files.html" class="btn btn-neutral float-left" title="rxn.metrics.class_tokens.maybe_prepare_class_token_files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="rxn.metrics.classification_translation.classification_translation.html" class="btn btn-neutral float-right" title="rxn.metrics.classification_translation.classification_translation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

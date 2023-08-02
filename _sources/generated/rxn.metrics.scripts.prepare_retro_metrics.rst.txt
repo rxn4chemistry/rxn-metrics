@@ -9,13 +9,6 @@ rxn.metrics.scripts.prepare\_retro\_metrics
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-      :toctree:
-   
-      create_rxn_from_files
-   
    
 
    

@@ -1,0 +1,6 @@
+rxn.metrics.true\_reactant\_accuracy.get\_standardized\_true\_reactants
+=======================================================================
+
+.. currentmodule:: rxn.metrics.true_reactant_accuracy
+
+.. autofunction:: get_standardized_true_reactants

@@ -1,0 +1,6 @@
+rxn.metrics.true\_reactant\_accuracy.maybe\_determine\_true\_reactants
+======================================================================
+
+.. currentmodule:: rxn.metrics.true_reactant_accuracy
+
+.. autofunction:: maybe_determine_true_reactants

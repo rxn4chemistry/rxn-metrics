@@ -1,0 +1,6 @@
+rxn.metrics.class\_tokens.maybe\_prepare\_class\_token\_files
+=============================================================
+
+.. currentmodule:: rxn.metrics.class_tokens
+
+.. autofunction:: maybe_prepare_class_token_files

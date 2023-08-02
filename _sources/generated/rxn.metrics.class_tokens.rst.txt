@@ -1,0 +1,31 @@
+rxn.metrics.class\_tokens
+=========================
+
+.. automodule:: rxn.metrics.class_tokens
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      convert_class_token_idx_for_translation_models
+      maybe_prepare_class_token_files
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

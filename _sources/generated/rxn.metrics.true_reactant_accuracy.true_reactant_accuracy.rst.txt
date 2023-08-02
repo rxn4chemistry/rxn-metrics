@@ -1,0 +1,6 @@
+rxn.metrics.true\_reactant\_accuracy.true\_reactant\_accuracy
+=============================================================
+
+.. currentmodule:: rxn.metrics.true_reactant_accuracy
+
+.. autofunction:: true_reactant_accuracy
