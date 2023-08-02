@@ -1,13 +1,18 @@
 from typing import Iterator, Sequence, TypeVar
 
-from rxn.utilities.files import PathLike, iterate_lines_from_file
-from rxn.utilities.misc import get_multiplier
+from rxn.chemutils.reaction_combiner import ReactionCombiner
+from rxn.chemutils.reaction_smiles import ReactionFormat
+from rxn.utilities.files import PathLike, count_lines, iterate_lines_from_file
+from rxn.utilities.misc import get_multiplier, get_multipliers
 
 T = TypeVar("T")
 
 
 def combine_precursors_and_products(
-    precursors: Iterator[str], products: Iterator[str]
+    precursors: Iterator[str],
+    products: Iterator[str],
+    total_precursors: int,
+    total_products: int,
 ) -> Iterator[str]:
     """
     Combine two matching iterables of precursors/products into an iterator of reaction SMILES.
@@ -15,14 +20,20 @@ def combine_precursors_and_products(
     Args:
         precursors: iterable of sets of precursors.
         products: iterable of sets of products.
+        total_precursors: total number of precursors.
+        total_products: total number of products.
 
     Returns:
         iterator over reaction SMILES.
     """
+    combiner = ReactionCombiner(reaction_format=ReactionFormat.STANDARD_WITH_TILDE)
 
-    yield from (
-        f"{precursor_set}>>{product_set}"
-        for precursor_set, product_set in zip(precursors, products)
+    precursor_multiplier, product_multiplier = get_multipliers(
+        total_precursors, total_products
+    )
+
+    yield from combiner.combine_iterators(
+        precursors, products, precursor_multiplier, product_multiplier
     )
 
 
@@ -39,10 +50,14 @@ def combine_precursors_and_products_from_files(
     Returns:
         iterator over reaction SMILES.
     """
+    n_precursors = count_lines(precursors_file)
+    n_products = count_lines(products_file)
 
     yield from combine_precursors_and_products(
         precursors=iterate_lines_from_file(precursors_file),
         products=iterate_lines_from_file(products_file),
+        total_precursors=n_precursors,
+        total_products=n_products,
     )
 
 

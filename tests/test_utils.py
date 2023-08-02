@@ -1,6 +1,34 @@
 import pytest
+from rxn.utilities.files import dump_list_to_file, named_temporary_directory
 
-from rxn.metrics.utils import get_sequence_multiplier
+from rxn.metrics.utils import (
+    combine_precursors_and_products_from_files,
+    get_sequence_multiplier,
+)
+
+
+def test_combine_precursors_and_products_from_files() -> None:
+    # Make sure that things are combined properly with the precursors file
+    # containing twice as many lines as the products file.
+    with named_temporary_directory() as tmp_dir:
+        precursors_file = tmp_dir / "a"
+        products_file = tmp_dir / "b"
+
+        dump_list_to_file(
+            ["CC.O", "CC.O.[Na+]~[Cl-]", "CCC.O", "NS.CCC.O"],
+            precursors_file,
+        )
+        dump_list_to_file(["CCO", "CCCO"], products_file)
+
+        results = combine_precursors_and_products_from_files(
+            precursors_file, products_file
+        )
+        assert list(results) == [
+            "CC.O>>CCO",
+            "CC.O.[Na+]~[Cl-]>>CCO",
+            "CCC.O>>CCCO",
+            "NS.CCC.O>>CCCO",
+        ]
 
 
 def test_get_sequence_multiplier() -> None:
