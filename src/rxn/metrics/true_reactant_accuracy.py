@@ -45,6 +45,11 @@ def maybe_determine_true_reactants(
     # package if the true reactant accuracy is not needed.
     from rxnmapper import BatchedMapper
 
+    # Mute the rxnmapper log entries
+    rxnmapper_logger = logging.getLogger("rxnmapper")
+    old_logger_level = rxnmapper_logger.level
+    rxnmapper_logger.setLevel(logging.ERROR)
+
     logger.info(
         "The user opted in for the true reactant accuracy; "
         "the ground truth and predicted reactions will be atom-mapped."
@@ -68,6 +73,9 @@ def maybe_determine_true_reactants(
         mapper.map_reactions(predicted_reactions), retro_files.predicted_mapped
     )
     logger.info("Atom-mapping the predicted reactions... Done.")
+
+    # Reset the logger level
+    rxnmapper_logger.setLevel(old_logger_level)
 
 
 def get_standardized_true_reactants(mapped_rxn_smiles: str) -> Optional[List[str]]:
