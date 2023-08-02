@@ -21,7 +21,7 @@ It has been tested on the following systems:
 + Linux: Ubuntu 18.04.4
 
 A Python version of 3.6, 3.7, or 3.8 is recommended.
-Python versions 3.9 and above are not expected to work due to compatibility with the selected version of OpenNMT.
+Python versions 3.9 and above are not expe`cted to work due to compatibility with the selected version of OpenNMT.
 
 ## Installation guide
 
