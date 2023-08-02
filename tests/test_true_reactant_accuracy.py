@@ -77,12 +77,12 @@ def test_true_reactant_accuracy() -> None:
     assert true_reactant_accuracy(
         [a[0], b[0], c[0]],
         [a[1], x[1], y[1], b[1], c[1], z[1]],
-    ) == {1: 2/3, 2: 1.0}
+    ) == {1: 2 / 3, 2: 1.0}
     # 1) correct prediction given first one time, and second one time
     assert true_reactant_accuracy(
         [a[0], b[0], c[0]],
         [x[1], a[1], x[1], z[1], c[1], z[1]],
-    ) == {1: 1 / 3, 2: 2/3}
+    ) == {1: 1 / 3, 2: 2 / 3}
 
     # If problem in the ground truth: count as incorrect! Here: no mapping
     assert true_reactant_accuracy(

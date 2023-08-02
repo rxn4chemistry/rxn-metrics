@@ -1,3 +1,5 @@
+import pytest
+
 from rxn.metrics.utils import get_sequence_multiplier
 
 

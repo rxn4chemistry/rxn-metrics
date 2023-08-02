@@ -1,6 +1,6 @@
 import importlib.util
 import logging
-from typing import Dict, Sequence, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn.chemutils.miscellaneous import smiles_has_atom_mapping
