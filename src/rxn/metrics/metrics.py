@@ -6,7 +6,8 @@ from typing import Dict, List, Sequence, Tuple, TypeVar
 
 import numpy as np
 from rxn.utilities.containers import chunker
-from rxn.utilities.misc import get_multiplier
+
+from .utils import get_sequence_multiplier
 
 T = TypeVar("T")
 
@@ -161,17 +162,3 @@ def class_diversity(
     }
     std_dev = {i + 1: float(np.std(classes_for_n[i])) for i in range(multiplier)}
     return classdiversity, std_dev
-
-
-def get_sequence_multiplier(ground_truth: Sequence[T], predictions: Sequence[T]) -> int:
-    """
-    Get the multiplier for the number of predictions by ground truth sample.
-
-    Raises:
-        ValueError: if the lists have inadequate sizes (possibly forwarded
-            from get_multiplier).
-    """
-    n_gt = len(ground_truth)
-    n_pred = len(predictions)
-
-    return get_multiplier(n_gt, n_pred)

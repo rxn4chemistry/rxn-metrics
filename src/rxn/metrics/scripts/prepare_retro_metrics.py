@@ -1,45 +1,25 @@
 import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 import click
 from rxn.chemutils.miscellaneous import canonicalize_file
-from rxn.chemutils.tokenization import copy_as_detokenized, detokenize_smiles
+from rxn.chemutils.tokenization import copy_as_detokenized
 from rxn.onmt_models import rxn_translation
-from rxn.utilities.files import (
-    dump_list_to_file,
-    ensure_directory_exists_and_is_empty,
-    iterate_lines_from_file,
-    load_list_from_file,
-    raise_if_paths_are_identical,
-)
+from rxn.utilities.files import ensure_directory_exists_and_is_empty
 from rxn.utilities.logging import setup_console_and_file_logger
 
-from rxn.metrics.classification_translation import classification_translation
+from rxn.metrics.class_tokens import maybe_prepare_class_token_files
+from rxn.metrics.classification_translation import maybe_classify_predictions
 from rxn.metrics.metrics_files import RetroFiles
 from rxn.metrics.run_metrics import evaluate_metrics
-from rxn.metrics.utils import convert_class_token_idx_for_tranlation_models
+from rxn.metrics.true_reactant_accuracy import (
+    maybe_determine_true_reactants,
+    true_reactant_environment_check,
+)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-
-
-def create_rxn_from_files(
-    input_file_precursors: Union[str, Path],
-    input_file_products: Union[str, Path],
-    output_file: Union[str, Path],
-) -> None:
-    raise_if_paths_are_identical(input_file_precursors, output_file)
-    raise_if_paths_are_identical(input_file_products, output_file)
-    logger.info(
-        f'Combining files "{input_file_precursors}" and "{input_file_products}" -> "{output_file}".'
-    )
-
-    precursors = load_list_from_file(input_file_precursors)
-    products = load_list_from_file(input_file_products)
-
-    rxn = [f"{prec}>>{prod}" for prec, prod in zip(precursors, products)]
-    dump_list_to_file(rxn, output_file)
 
 
 @click.command(context_settings={"show_default": True})
@@ -84,7 +64,9 @@ def create_rxn_from_files(
 @click.option(
     "--n_best", default=10, type=int, help="Number of retro predictions to make (top-N)"
 )
-@click.option("--gpu", is_flag=True, help="If given, run the predictions on a GPU.")
+@click.option(
+    "--gpu/--no-gpu", default=False, help="Whether to run the predictions on a GPU."
+)
 @click.option(
     "--no_metrics", is_flag=True, help="If given, the metrics will not be computed."
 )
@@ -96,6 +78,20 @@ def create_rxn_from_files(
     default=None,
     type=int,
     help="The number of tokens used in the trainings",
+)
+@click.option(
+    "--with_true_reactant_accuracy/--no_true_reactant_accuracy",
+    default=False,
+    help="Whether to calculate the true reactant accuracy, based on rxnmapper.",
+)
+@click.option(
+    "--rxnmapper_batch_size",
+    default=8,
+    type=int,
+    help=(
+        "Batch size for RXNMapper. Considered "
+        "only if the true reactant accuracy is activated."
+    ),
 )
 def main(
     precursors_file: Path,
@@ -110,32 +106,23 @@ def main(
     no_metrics: bool,
     beam_size: int,
     class_tokens: Optional[int],
+    with_true_reactant_accuracy: bool,
+    rxnmapper_batch_size: int,
 ) -> None:
     """Starting from the ground truth files and two models (retro, forward),
     generate the translation files needed for the metrics, and calculate the default metrics.
     """
+    true_reactant_environment_check(with_true_reactant_accuracy)
 
     ensure_directory_exists_and_is_empty(output_dir)
     retro_files = RetroFiles(output_dir)
 
     setup_console_and_file_logger(retro_files.log_file)
 
-    if class_tokens is not None:
-        class_token_products = (
-            f"{convert_class_token_idx_for_tranlation_models(class_token_idx)}{detokenize_smiles(line)}"
-            for line in iterate_lines_from_file(products_file)
-            for class_token_idx in range(class_tokens)
-        )
-        class_token_precursors = (
-            detokenize_smiles(line)
-            for line in iterate_lines_from_file(precursors_file)
-            for _ in range(class_tokens)
-        )
-        dump_list_to_file(class_token_products, retro_files.class_token_products)
-        dump_list_to_file(class_token_precursors, retro_files.class_token_precursors)
-
     copy_as_detokenized(products_file, retro_files.gt_src)
     copy_as_detokenized(precursors_file, retro_files.gt_tgt)
+
+    maybe_prepare_class_token_files(class_tokens, retro_files)
 
     # retro
     rxn_translation(
@@ -182,24 +169,10 @@ def main(
         fallback_value="",
     )
 
-    if classification_model:
-        create_rxn_from_files(
-            retro_files.predicted_canonical,
-            retro_files.predicted_products_canonical,
-            retro_files.predicted_rxn_canonical,
-        )
-
-        # Classification
-        classification_translation(
-            src_file=retro_files.predicted_rxn_canonical,
-            tgt_file=None,
-            pred_file=retro_files.predicted_classes,
-            model=classification_model,
-            n_best=1,
-            beam_size=5,
-            batch_size=batch_size,
-            gpu=gpu,
-        )
+    maybe_classify_predictions(classification_model, retro_files, batch_size, gpu)
+    maybe_determine_true_reactants(
+        with_true_reactant_accuracy, retro_files, rxnmapper_batch_size
+    )
 
     if not no_metrics:
         evaluate_metrics("retro", output_dir)
