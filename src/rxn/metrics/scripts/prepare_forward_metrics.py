@@ -38,6 +38,9 @@ from rxn.metrics.run_metrics import evaluate_metrics, run_model_for_metrics
 @click.option(
     "--no_metrics", is_flag=True, help="If given, the metrics will not be computed."
 )
+@click.option(
+    "--as_external_command", type=bool, default=False, help="Run translation as external ONMT command"
+)
 def main(
     precursors_file: Path,
     products_file: Path,
@@ -47,6 +50,7 @@ def main(
     n_best: int,
     gpu: bool,
     no_metrics: bool,
+    as_external_command: bool,
 ) -> None:
     """Starting from the ground truth files and forward model, generate the
     translation files needed for the metrics, and calculate the default metrics."""
@@ -62,6 +66,7 @@ def main(
         batch_size=batch_size,
         gpu=gpu,
         initialize_logger=True,
+        as_external_command=as_external_command,
     )
 
     if not no_metrics:
