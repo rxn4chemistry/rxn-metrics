@@ -69,6 +69,7 @@ def run_model_for_metrics(
     gpu: bool,
     initialize_logger: bool = False,
     as_external_command: bool = False,
+    **kwargs,
 ) -> None:
     ensure_directory_exists_and_is_empty(output_dir)
     files = get_metrics_files(task, output_dir)
@@ -90,6 +91,7 @@ def run_model_for_metrics(
         batch_size=batch_size,
         gpu=gpu,
         as_external_command=as_external_command,
+        **kwargs,
     )
 
     canonicalize_file(

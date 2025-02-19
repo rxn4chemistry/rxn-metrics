@@ -93,6 +93,10 @@ logger.addHandler(logging.NullHandler())
         "only if the true reactant accuracy is activated."
     ),
 )
+@click.option(
+    "--as_external_command", type=bool, default=False, help="Run translation as external ONMT command"
+)
+@click.argument('extra_options', nargs=-1, type=click.UNPROCESSED)
 def main(
     precursors_file: Path,
     products_file: Path,
@@ -108,10 +112,16 @@ def main(
     class_tokens: Optional[int],
     with_true_reactant_accuracy: bool,
     rxnmapper_batch_size: int,
+    as_external_command: bool,
+    extra_options: list,
 ) -> None:
     """Starting from the ground truth files and two models (retro, forward),
     generate the translation files needed for the metrics, and calculate the default metrics.
     """
+
+    # Convert extra_options into a dictionary
+    kwargs = {key: value for key, value in (opt.split('=') for opt in extra_options)}
+
     true_reactant_environment_check(with_true_reactant_accuracy)
 
     ensure_directory_exists_and_is_empty(output_dir)
@@ -142,6 +152,8 @@ def main(
         beam_size=beam_size,
         batch_size=batch_size,
         gpu=gpu,
+        as_external_command=as_external_command,
+        **kwargs,
     )
 
     canonicalize_file(
@@ -161,6 +173,8 @@ def main(
         beam_size=10,
         batch_size=batch_size,
         gpu=gpu,
+        as_external_command=as_external_command,
+        **kwargs,
     )
 
     canonicalize_file(
